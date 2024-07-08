@@ -121,22 +121,22 @@ class BaseNotesThresholdModal(discord.ui.Modal):
         return int(value) if len(value) > 0 else None
 
     @overload
-    def _to_msg(self, title: str, value: int | None, date_frequency: str = "每天") -> str: ...
+    def _to_msg(self, title: str, value: int | None, date_frequency: str = "Every day") -> str: ...
 
     @overload
-    def _to_msg(self, title: str, value: int | None, date_frequency: str = "每天") -> str: ...
+    def _to_msg(self, title: str, value: int | None, date_frequency: str = "Every day") -> str: ...
 
     def _to_msg(
-        self, title: str, value: int | datetime | None, date_frequency: str = "每天"
+        self, title: str, value: int | datetime | None, date_frequency: str = "Every day"
     ) -> str:
         if value is None:
             return ""
         if isinstance(value, datetime):
-            return f"． {title}：{date_frequency} {value.strftime('%H:%M')} 檢查\n"
+            return f"． {title}：{date_frequency} {value.strftime('%H:%M')} check\n"
         if value == 0:
-            return f"． {title}：當完成時提醒\n"
+            return f"． {title}：Remind when completed\n"
         else:
-            return f"． {title}：完成前 {value} 小時提醒\n"
+            return f"． {title}：Remind {value} hours before completion\n"
 
 
 class GenshinNotesThresholdModal(BaseNotesThresholdModal, title="Set Genshin Impact reminder"):

@@ -51,7 +51,7 @@ class Tool:
                 or (game == genshin.Game.STARRAIL and user.uid_starrail is None)
                 or (game == genshin.Game.ZZZ and user.uid_zzz is None)
             ):
-                return False, f'Cannot find character UID, please set your UID first (use {get_app_command_mention("uid設定")} for instructions)'
+                return False, f'Cannot find character UID, please set your UID first (use {get_app_command_mention("uid_settings")} for instructions)'
 
         return True, ""
 
