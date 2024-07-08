@@ -47,17 +47,17 @@ class RecordCard:
             fp.close()
 
 
-class RecordCardCog(commands.Cog, name="紀錄卡片"):
+class RecordCardCog(commands.Cog, name="record_card"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="card紀錄卡片", description="產生原神個人遊戲紀錄卡片")
-    @app_commands.rename(option="選項", user="使用者")
-    @app_commands.describe(option="選擇要查詢數據總覽或是世界探索度", user="查詢其他成員的資料，不填寫則查詢自己")
+    @app_commands.command(name="record_card", description="Generate a personal game record card for Genshin Impact")
+    @app_commands.rename(option="option", user="user")
+    @app_commands.describe(option="Select whether to view data overview or world exploration progress", user="To query data for other members, leave this blank to query for yourself")
     @app_commands.choices(
         option=[
-            Choice(name="數據總覽", value="RECORD"),
-            Choice(name="世界探索", value="EXPLORATION"),
+            Choice(name="Record", value="RECORD"),
+            Choice(name="Exploration", value="EXPLORATION"),
         ]
     )
     @app_commands.checks.cooldown(1, config.slash_cmd_cooldown)
@@ -76,7 +76,7 @@ class RecordCardCog(commands.Cog, name="紀錄卡片"):
     ):
         if isinstance(error, app_commands.CommandOnCooldown):
             await interaction.response.send_message(
-                embed=EmbedTemplate.error(f"產生卡片的間隔為{config.slash_cmd_cooldown}秒，請稍後再使用~"),
+                embed = EmbedTemplate.error(f"The cooldown for generating a card is {config.slash_cmd_cooldown} seconds. Please try again later."),
                 ephemeral=True,
             )
 
@@ -84,7 +84,7 @@ class RecordCardCog(commands.Cog, name="紀錄卡片"):
 async def setup(client: commands.Bot):
     await client.add_cog(RecordCardCog(client))
 
-    @client.tree.context_menu(name="遊戲紀錄卡片")
+    @client.tree.context_menu(name="record card")
     @ContextCommandLogger
     async def context_card(interaction: discord.Interaction, user: discord.User):
         await RecordCard.card(interaction, user, "RECORD")

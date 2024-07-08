@@ -125,6 +125,6 @@ async def get_genshin_notices() -> Sequence[genshin.models.Announcement]:
     `Sequence[Announcement]`
         公告事項查詢結果
     """
-    client = genshin.Client(lang="zh-tw")
+    client = genshin.Client(lang="vi-vn")
     notices = await client.get_genshin_announcements()
     return notices

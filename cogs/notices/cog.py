@@ -12,11 +12,11 @@ from utility.custom_log import SlashCommandLogger
 from .ui import Dropdown, View
 
 
-class NoticesCog(commands.Cog, name="遊戲公告"):
+class NoticesCog(commands.Cog, name="notices"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="notices原神公告", description="顯示原神的遊戲公告與活動公告")
+    @app_commands.command(name="notices", description="Display game notices and event announcements for Genshin Impact")
     @SlashCommandLogger
     async def slash_notices(self, interaction: discord.Interaction):
         try:
@@ -41,11 +41,11 @@ class NoticesCog(commands.Cog, name="遊戲公告"):
 
             view = View()
             if len(game) > 0:
-                view.add_item(Dropdown(game, "遊戲公告："))
+                view.add_item(Dropdown(game, "Game notices："))
             if len(event) > 0:
-                view.add_item(Dropdown(event, "活動公告："))
+                view.add_item(Dropdown(event, "Game notices："))
             if len(wish) > 0:
-                view.add_item(Dropdown(wish, "祈願卡池："))
+                view.add_item(Dropdown(wish, "Game notices："))
             await interaction.edit_original_response(view=view)
 
 

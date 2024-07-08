@@ -33,7 +33,7 @@ async def check_threshold(user: StarrailScheduleNotes, notes: genshin.models.Sta
     if isinstance(user.threshold_power, int):
         # 當開拓力距離額滿時間低於設定值，則設定要發送的訊息
         if notes.stamina_recover_time <= timedelta(hours=user.threshold_power):
-            msg += "開拓力已經額滿啦！" if notes.stamina_recover_time <= timedelta(0) else "開拓力快要額滿啦！"
+            msg += "Trailblaze Power is full！" if notes.stamina_recover_time <= timedelta(0) else "Trailblaze Power is almost full！"
         next_check_time.append(
             datetime.now() + timedelta(hours=6)
             if notes.current_stamina >= notes.max_stamina
@@ -43,7 +43,7 @@ async def check_threshold(user: StarrailScheduleNotes, notes: genshin.models.Sta
     if isinstance(user.threshold_expedition, int) and len(notes.expeditions) > 0:
         longest_expedition = max(notes.expeditions, key=lambda epd: epd.remaining_time)
         if longest_expedition.remaining_time <= timedelta(hours=user.threshold_expedition):
-            msg += "委託已經完成了！" if longest_expedition.remaining_time <= timedelta(0) else "委託快要完成了！"
+            msg += "Expeditions is complete！" if longest_expedition.remaining_time <= timedelta(0) else "Expeditions is almost complete！"
         next_check_time.append(
             datetime.now() + timedelta(hours=6)
             if longest_expedition.finished is True
@@ -54,7 +54,7 @@ async def check_threshold(user: StarrailScheduleNotes, notes: genshin.models.Sta
         # 當現在時間已超過設定的檢查時間
         if datetime.now() >= user.check_daily_training_time:
             if notes.current_train_score < notes.max_train_score:
-                msg += "今日的每日實訓還未完成！"
+                msg += "Today's daily training has not yet completed.！"
             # 下次檢查時間為今天+1天，並更新至資料庫
             user.check_daily_training_time += timedelta(days=1)
         next_check_time.append(user.check_daily_training_time)
@@ -63,7 +63,7 @@ async def check_threshold(user: StarrailScheduleNotes, notes: genshin.models.Sta
         # 當現在時間已超過設定的檢查時間
         if datetime.now() >= user.check_universe_time:
             if notes.current_rogue_score < notes.max_rogue_score:
-                msg += "本周的模擬宇宙還未完成！"
+                msg += "This week's Simulated Universe is not yet complete！"
             # 下次檢查時間為下一周，並更新至資料庫
             user.check_universe_time += timedelta(weeks=1)
         next_check_time.append(user.check_universe_time)
@@ -72,7 +72,7 @@ async def check_threshold(user: StarrailScheduleNotes, notes: genshin.models.Sta
         # 當現在時間已超過設定的檢查時間
         if datetime.now() >= user.check_echoofwar_time:
             if notes.remaining_weekly_discounts > 0:
-                msg += "本周的歷戰餘響還未完成！"
+                msg += "The Weekly bosses is not yet complete.！"
             # 下次檢查時間為下一周，並更新至資料庫
             user.check_echoofwar_time += timedelta(weeks=1)
         next_check_time.append(user.check_echoofwar_time)

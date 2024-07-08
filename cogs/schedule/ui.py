@@ -41,33 +41,33 @@ class DailyRewardOptionsView(discord.ui.View):
     @discord.ui.select(
         cls=discord.ui.Select,
         options=[
-            discord.SelectOption(label="原神", value="原神"),
-            discord.SelectOption(label="崩壞3", value="崩壞3"),
-            discord.SelectOption(label="星穹鐵道", value="星穹鐵道"),
-            discord.SelectOption(label="絕區零", value="絕區零"),
-            discord.SelectOption(label="未定事件簿(國際服)", value="未定事件簿(國際服)"),
-            discord.SelectOption(label="未定事件簿(台服)", value="未定事件簿(台服)"),
+            discord.SelectOption(label="Genshin Impact", value="Genshin Impact"),
+            discord.SelectOption(label="Honkai Impact 3", value="Honkai Impact 3"),
+            discord.SelectOption(label="Honkai: Star Rail", value="Honkai: Star Rail"),
+            discord.SelectOption(label="Zenless Zone Zero", value="Zenless Zone Zero"),
+            discord.SelectOption(label="Tears of Themis", value="Tears of Themis"),
+            discord.SelectOption(label="Tears of Themis(TW)", value="Tears of Themis(TW)"),
         ],
         min_values=1,
         max_values=6,
-        placeholder="請選擇要簽到的遊戲(可多選)：",
+        placeholder="Please select the game you want to sign in (multiple choices possible):",
     )
     async def select_games_callback(
         self, interaction: discord.Interaction, select: discord.ui.Select
     ):
         await interaction.response.defer()
         self.selected_games = " + ".join(select.values)
-        if "原神" in self.selected_games:
+        if "Genshin Impact" in self.selected_games:
             self.has_genshin = True
-        if "崩壞3" in self.selected_games:
+        if "Honkai Impact 3" in self.selected_games:
             self.has_honkai3rd = True
-        if "星穹鐵道" in self.selected_games:
+        if "Honkai: Star Rail" in self.selected_games:
             self.has_starrail = True
-        if "絕區零" in self.selected_games:
+        if "Zenless Zone Zero" in self.selected_games:
             self.has_zzz = True
-        if "未定事件簿(國際服)" in self.selected_games:
+        if "Tears of Themis" in self.selected_games:
             self.has_themis = True
-        if "未定事件簿(台服)" in self.selected_games:
+        if "Tears of Themis(TW)" in self.selected_games:
             self.has_themis_tw = True
 
     @discord.ui.select(
@@ -75,7 +75,7 @@ class DailyRewardOptionsView(discord.ui.View):
         options=[discord.SelectOption(label=str(i).zfill(2), value=str(i)) for i in range(0, 24)],
         min_values=0,
         max_values=1,
-        placeholder="請選擇要簽到的時間(時)：",
+        placeholder="Please select the time (hour) you want to sign in:",
     )
     async def select_hour_callback(
         self, interaction: discord.Interaction, select: discord.ui.Select
@@ -91,7 +91,7 @@ class DailyRewardOptionsView(discord.ui.View):
         ],
         min_values=0,
         max_values=1,
-        placeholder="請選擇要簽到的時間(分)：",
+        placeholder="Please select the time (in minutes) you would like to sign in:",
     )
     async def select_minute_callback(
         self, interaction: discord.Interaction, select: discord.ui.Select
@@ -100,13 +100,13 @@ class DailyRewardOptionsView(discord.ui.View):
         if len(select.values) > 0:
             self.minute = int(select.values[0])
 
-    @discord.ui.button(label="要tag", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="tag", style=discord.ButtonStyle.blurple)
     async def button1_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.is_mention = True
         self.stop()
 
-    @discord.ui.button(label="不用tag", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="no tag", style=discord.ButtonStyle.blurple)
     async def button2_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.is_mention = False
@@ -124,7 +124,7 @@ class BaseNotesThresholdModal(discord.ui.Modal):
     def _to_msg(self, title: str, value: int | None, date_frequency: str = "每天") -> str: ...
 
     @overload
-    def _to_msg(self, title: str, value: datetime | None, date_frequency: str = "每天") -> str: ...
+    def _to_msg(self, title: str, value: int | None, date_frequency: str = "每天") -> str: ...
 
     def _to_msg(
         self, title: str, value: int | datetime | None, date_frequency: str = "每天"
@@ -139,36 +139,36 @@ class BaseNotesThresholdModal(discord.ui.Modal):
             return f"． {title}：完成前 {value} 小時提醒\n"
 
 
-class GenshinNotesThresholdModal(BaseNotesThresholdModal, title="設定原神即時便箋提醒"):
+class GenshinNotesThresholdModal(BaseNotesThresholdModal, title="Set Genshin Impact reminder"):
     """設定原神檢查即時便箋各項閾值的表單"""
 
     resin: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="原粹樹脂：設定樹脂額滿之前幾小時發送提醒 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0 ~ 8 的整數",
+        label="Set hours to remind resin",
+        placeholder="Please enter an number between 0 and 8",
         required=False,
         max_length=1,
     )
     realm_currency: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="洞天寶錢：設定寶錢額滿之前幾小時發送提醒 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0 ~ 24 的整數",
+        label="Set hours to remind realm currency",
+        placeholder="Please enter an number between 0 and 24",
         required=False,
         max_length=2,
     )
     transformer: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="質變儀：設定質變儀完成之前幾小時發送提醒 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0 ~ 5 的整數",
+        label="Set hours to remind transformer",
+        placeholder="Please enter an number between 0 and 5",
         required=False,
         max_length=1,
     )
     expedition: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="探索派遣：設定全部派遣完成之前幾小時發送提醒 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0 ~ 5 的整數",
+        label="Set hours to remind expedition",
+        placeholder="Please enter an number between 0 and 5",
         required=False,
         max_length=1,
     )
     commission: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="每日委託：設定每天幾點提醒今天的委託任務還未完成 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0000~2359 的數，例如 0200、2135",
+        label="Set hours to remind commissions",
+        placeholder="Please enter a number between 0000 and 2359",
         required=False,
         max_length=4,
         min_length=4,
@@ -228,7 +228,7 @@ class GenshinNotesThresholdModal(BaseNotesThresholdModal, title="設定原神即
                     commission_time += timedelta(days=1)
         except Exception:
             await interaction.response.send_message(
-                embed=EmbedTemplate.error("輸入數值有誤，請確認輸入的數值為整數且在規定範圍內"),
+                embed=EmbedTemplate.error("The input value is incorrect. Please ensure the input value is an integer and within the specified range"),
                 ephemeral=True,
             )
         else:
@@ -245,49 +245,49 @@ class GenshinNotesThresholdModal(BaseNotesThresholdModal, title="設定原神即
                 )
             )
             await interaction.response.send_message(
-                embed=EmbedTemplate.normal(
-                    f"原神設定完成，當達到以下設定值時會發送提醒訊息：\n"
-                    f"{self._to_msg('原粹樹脂', resin)}"
-                    f"{self._to_msg('洞天寶錢', realm_currency)}"
-                    f"{self._to_msg('質變儀　', transformer)}"
-                    f"{self._to_msg('探索派遣', expedition)}"
-                    f"{self._to_msg('每日委託', commission_time)}"
+                embed = EmbedTemplate.normal(
+                    f"Genshin Impact settings completed. Reminders will be sent when the following thresholds are reached:\n"
+                    f"{self._to_msg('Resin', resin)}"
+                    f"{self._to_msg('Realm Currency', realm_currency)}"
+                    f"{self._to_msg('Transformer', transformer)}"
+                    f"{self._to_msg('Expedition', expedition)}"
+                    f"{self._to_msg('Daily Commissions', commission_time)}"
                 )
             )
 
 
-class StarrailCheckNotesThresholdModal(BaseNotesThresholdModal, title="設定星穹鐵道即時便箋提醒"):
+class StarrailCheckNotesThresholdModal(BaseNotesThresholdModal, title="Set Honkai: Star Rail reminder"):
     """設定星穹鐵道檢查即時便箋各項閾值的表單"""
 
     power: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="開拓力：設定開拓力額滿之前幾小時發送提醒 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0 ~ 8 的整數",
+        label="Set hours remind Trailblaze Power",
+        placeholder="Please enter an number between 0 and 8",
         required=False,
         max_length=1,
     )
     expedition: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="委託：設定全部委託完成之前幾小時發送提醒 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0 ~ 5 的整數",
+        label="Set hours to remind Expedition",
+        placeholder="Please enter an number between 0 and 5",
         required=False,
         max_length=1,
     )
     dailytraining: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="每日實訓：設定每天幾點提醒今天的每日實訓還未完成 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0000~2359 的數，例如 0200、2135",
+        label="Set hours to remind Daily",
+        placeholder="Please enter a number between 0000 and 2359",
         required=False,
         max_length=4,
         min_length=4,
     )
     universe: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="模擬宇宙：設定每周日幾點提醒本周的模擬宇宙還未完成 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0000~2359 的數，例如 0200、2135",
+        label="Set hours remind Simulated Universe",
+        placeholder="Please enter a number between 0000 and 2359",
         required=False,
         max_length=4,
         min_length=4,
     )
     echoofwar: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="歷戰餘響：設定每周日幾點提醒本周的歷戰餘響還未完成 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0000~2359 的數，例如 0200、2135",
+        label="Set hours on Sundays remind Weekly Bosses",
+        placeholder="Please enter a number between 0000 and 2359",
         required=False,
         max_length=4,
         min_length=4,
@@ -370,7 +370,7 @@ class StarrailCheckNotesThresholdModal(BaseNotesThresholdModal, title="設定星
 
         except Exception:
             await interaction.response.send_message(
-                embed=EmbedTemplate.error("輸入數值有誤，請確認輸入的數值為整數且在規定範圍內"),
+                embed=EmbedTemplate.error("The input value is incorrect. Please ensure the input value is an integer and within the specified range."),
                 ephemeral=True,
             )
         else:
@@ -387,29 +387,29 @@ class StarrailCheckNotesThresholdModal(BaseNotesThresholdModal, title="設定星
                 )
             )
             await interaction.response.send_message(
-                embed=EmbedTemplate.normal(
-                    f"星穹鐵道設定完成，當達到以下設定值時會發送提醒訊息：\n"
-                    f"{self._to_msg('開拓力　', power)}"
-                    f"{self._to_msg('委託執行', expedition)}"
-                    f"{self._to_msg('每日實訓', dailytraining_time)}"
-                    f"{self._to_msg('模擬宇宙', universe_time, '周日')}"
-                    f"{self._to_msg('歷戰餘響', echoofwar_time, '周日')}"
+                embed = EmbedTemplate.normal(
+                    f"Honkai: Star Rail settings completed. Reminders will be sent when the following thresholds are reached:\n"
+                    f"{self._to_msg('Trailblaze Power', power)}"
+                    f"{self._to_msg('Expedition', expedition)}"
+                    f"{self._to_msg('Daily Training', dailytraining_time)}"
+                    f"{self._to_msg('Simulated Universe', universe_time, 'on Sundays')}"
+                    f"{self._to_msg('Weekly bosses', echoofwar_time, 'on Sundays')}"
                 )
             )
 
 
-class ZZZCheckNotesThresholdModal(BaseNotesThresholdModal, title="設定絕區零即時便箋提醒"):
+class ZZZCheckNotesThresholdModal(BaseNotesThresholdModal, title="Set Zenless Zone Zero reminder"):
     """設定絕區零檢查即時便箋各項閾值的表單"""
 
     battery: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="電量：設定電量額滿之前幾小時發送提醒 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0 ~ 8 的整數",
+        label="Set hours remind Battery",
+        placeholder="Please enter an number between 0 and 8",
         required=False,
         max_length=1,
     )
     dailyengagement: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
-        label="今日活躍度：設定每天幾點提醒今天活躍度還未完成 (不填表示不提醒)",
-        placeholder="請輸入一個介於 0000~2359 的數，例如 0200、2135",
+        label="Set hours remind Daily Engagement",
+        placeholder="Please enter a number between 0000 and 2359",
         required=False,
         max_length=4,
         min_length=4,
@@ -450,7 +450,7 @@ class ZZZCheckNotesThresholdModal(BaseNotesThresholdModal, title="設定絕區�
                     dailyengagement_time += timedelta(days=1)
         except Exception:
             await interaction.response.send_message(
-                embed=EmbedTemplate.error("輸入數值有誤，請確認輸入的數值為整數且在規定範圍內"),
+                embed=EmbedTemplate.error("The input value is incorrect. Please ensure the input value is an integer and within the specified range"),
                 ephemeral=True,
             )
         else:
@@ -465,8 +465,8 @@ class ZZZCheckNotesThresholdModal(BaseNotesThresholdModal, title="設定絕區�
             )
             await interaction.response.send_message(
                 embed=EmbedTemplate.normal(
-                    f"絕區零設定完成，當達到以下設定值時會發送提醒訊息：\n"
-                    f"{self._to_msg('電量　　', battery)}"
-                    f"{self._to_msg('今日活躍', dailyengagement_time)}"
+                    f"Zenless Zone Zero settings completed. Reminders will be sent when the following thresholds are reached：\n"
+                    f"{self._to_msg('Battery', battery)}"
+                    f"{self._to_msg('Daily Engagement', dailyengagement_time)}"
                 )
             )

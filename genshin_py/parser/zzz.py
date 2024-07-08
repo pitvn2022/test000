@@ -11,22 +11,22 @@ async def parse_zzz_notes(
 ) -> discord.Embed:
     """解析即時便箋的資料，將內容排版成 discord 嵌入格式回傳"""
     # 電量
-    battery_title = f"當前電量：{notes.battery_charge.current}/{notes.battery_charge.max}"
+    battery_title = f"Battery：{notes.battery_charge.current}/{notes.battery_charge.max}"
     if notes.battery_charge.is_full:
-        recovery_time = "已充滿！"
+        recovery_time = "Full！"
     else:
         day_msg = get_day_of_week(notes.battery_charge.full_datetime)
         recovery_time = f"{day_msg} {notes.battery_charge.full_datetime.strftime('%H:%M')}"
-    battery_msg = f"恢復時間：{recovery_time}\n"
+    battery_msg = f"Battery：{recovery_time}\n"
 
     video_state_map = {
-        genshin.models.VideoStoreState.REVENUE_AVAILABLE: "待結算",
-        genshin.models.VideoStoreState.WAITING_TO_OPEN: "等待營業",
-        genshin.models.VideoStoreState.CURRENTLY_OPEN: "正在營業",
+        genshin.models.VideoStoreState.REVENUE_AVAILABLE: "Settlement Pending",
+        genshin.models.VideoStoreState.WAITING_TO_OPEN: "Waiting to Open",
+        genshin.models.VideoStoreState.CURRENTLY_OPEN: "Currently Open",
     }
-    battery_msg += f"每日活躍：{notes.engagement.current}/{notes.engagement.max}\n"
-    battery_msg += f"刮刮樂　：{'已完成' if notes.scratch_card_completed else '未完成'}\n"
-    battery_msg += f"錄影帶店：{video_state_map.get(notes.video_store_state, '')}\n"
+    battery_msg += f"Daily Engagement: {notes.engagement.current}/{notes.engagement.max}\n"
+    battery_msg += f"Scratch Card: {'Completed' if notes.scratch_card_completed else 'Not Completed'}\n"
+    battery_msg += f"Video Store: {video_state_map.get(notes.video_store_state, '')}\n"
 
     # 根據電量數量，以一半作分界，embed 顏色從綠色 (0x28c828) 漸變到黃色 (0xc8c828)，再漸變到紅色 (0xc82828)
     battery = notes.battery_charge.current

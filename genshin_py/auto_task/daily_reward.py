@@ -49,7 +49,7 @@ class DailyReward:
             return
         await cls._lock.acquire()
         try:
-            LOG.System("每日自動簽到開始")
+            LOG.System("Daily automatic sign-in start")
 
             # 初始化
             queue: asyncio.Queue[ScheduleDailyCheckin] = asyncio.Queue()
@@ -76,11 +76,11 @@ class DailyReward:
                 task.cancel()
 
             _log_message = (
-                f"自動簽到結束：總共 {sum(cls._total.values())} 人簽到，"
-                + f"其中 {sum(cls._honkai_count.values())} 人簽到崩壞3、"
-                + f"{sum(cls._starrail_count.values())} 人簽到星穹鐵道、"
-                + f"{sum(cls._zzz_count.values())} 人簽到絕區零、"
-                + f"{sum(cls._themis_count.values())} 人簽到未定事件簿\n"
+                f"Auto check-in ended: {sum(cls._total.values())} people checked in in total, "
+                + f"Including {sum(cls._honkai_count.values())} people signed into Honkai Impact 3rd, "
+                + f"{sum(cls._starrail_count.values())} people signed into Honkai: Star Rail, "
+                + f"{sum(cls._zzz_count.values())} people signed into Zenless Zone Zero, "
+                + f"{sum(cls._themis_count.values())} people signed into Tears of Themis\n"
             )
             for host in cls._total.keys():
                 _log_message += (
@@ -248,15 +248,15 @@ class DailyReward:
             # 若不用@提及使用者，則先取得此使用者的名稱然後發送訊息
             if user.is_mention is False and "Cookie已失效" not in message:
                 _user = await bot.fetch_user(user.discord_id)
-                await channel.send(embed=EmbedTemplate.normal(f"[自動簽到] {_user.name}：{message}"))  # type: ignore
+                await channel.send(embed=EmbedTemplate.normal(f"Automatic sign-in: {_user.name}：{message}"))  # type: ignore
             else:  # 若需要@提及使用者或是 Cookie 已失效
-                await channel.send(f"<@{user.discord_id}>", embed=EmbedTemplate.normal(f"[自動簽到] {message}"))  # type: ignore
+                await channel.send(f"<@{user.discord_id}>", embed=EmbedTemplate.normal(f"Automatic sign-in: {message}"))  # type: ignore
         except (
             discord.Forbidden,
             discord.NotFound,
             discord.InvalidData,
         ) as e:  # 發送訊息失敗，移除此使用者
-            LOG.Except(f"自動簽到發送訊息失敗，移除此使用者 {LOG.User(user.discord_id)}：{e}")
+            LOG.Except(f"Failed to send message, remove this user. {LOG.User(user.discord_id)}：{e}")
             await Database.delete_instance(user)
         except Exception as e:
             sentry_sdk.capture_exception(e)

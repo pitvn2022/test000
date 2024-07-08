@@ -39,10 +39,10 @@ class Tool:
             - 檢查失敗時，回傳錯誤訊息
         """
         if user is None:
-            return False, f'找不到使用者，請先設定Cookie(使用 {get_app_command_mention("cookie設定")} 顯示說明)'
+            return False, f'User not found, please set Cookie first (use {get_app_command_mention("cookie_settings")} to display instructions)'
 
         if check_cookie is True and user.cookie_default is None:
-            return False, f'找不到Cookie，請先設定Cookie(使用 {get_app_command_mention("cookie設定")} 顯示說明)'
+            return False, f'Cookie not found, please set Cookie first (use {get_app_command_mention("cookie_settings")} to display instructions)'
 
         if check_uid is True and game is not None:
             if (
@@ -51,7 +51,7 @@ class Tool:
                 or (game == genshin.Game.STARRAIL and user.uid_starrail is None)
                 or (game == genshin.Game.ZZZ and user.uid_zzz is None)
             ):
-                return False, f'找不到角色UID，請先使用 {get_app_command_mention("uid設定")} 來設定UID)'
+                return False, f'Cannot find character UID, please set your UID first (use {get_app_command_mention("uid設定")} for instructions)'
 
         return True, ""
 

@@ -19,7 +19,7 @@ def parse_genshin_abyss_overview(abyss: genshin.models.SpiralAbyss) -> discord.E
     """
     result = discord.Embed(
         description=(
-            f'第 {abyss.season} 期：{abyss.start_time.astimezone().strftime("%Y.%m.%d")} ~ '
+            f'Spiral Abyss Season {abyss.season} ：{abyss.start_time.astimezone().strftime("%Y.%m.%d")} ~ '
             f'{abyss.end_time.astimezone().strftime("%Y.%m.%d")}'
         ),
         color=0x6959C1,
@@ -35,12 +35,12 @@ def parse_genshin_abyss_overview(abyss: genshin.models.SpiralAbyss) -> discord.E
         return " " if len(c) == 0 else f"{c[0].name}：{c[0].value}"
 
     result.add_field(
-        name=f'最深抵達：{abyss.max_floor}　戰鬥次數：{"👑 (12)" if crowned else abyss.total_battles}　★：{abyss.total_stars}',
-        value=f"[最多擊破數] {get_character_rank(abyss.ranks.most_kills)}\n"
-        f"[最強之一擊] {get_character_rank(abyss.ranks.strongest_strike)}\n"
-        f"[受最多傷害] {get_character_rank(abyss.ranks.most_damage_taken)}\n"
-        f"[Ｑ施放次數] {get_character_rank(abyss.ranks.most_bursts_used)}\n"
-        f"[Ｅ施放次數] {get_character_rank(abyss.ranks.most_skills_used)}",
+        name=f'Deepest Descent：{abyss.max_floor}　Battles Fough：{"👑 (12)" if crowned else abyss.total_battles}　★：{abyss.total_stars}',
+        value=f"Most Defeats {get_character_rank(abyss.ranks.most_kills)}\n"
+        f"Strongest Single Strike {get_character_rank(abyss.ranks.strongest_strike)}\n"
+        f"Most Damage Taken {get_character_rank(abyss.ranks.most_damage_taken)}\n"
+        f"Elemental Bursts {get_character_rank(abyss.ranks.most_bursts_used)}\n"
+        f"Elemental Skills Cast {get_character_rank(abyss.ranks.most_skills_used)}",
         inline=False,
     )
     return result
@@ -180,48 +180,48 @@ async def parse_genshin_notes(
     `discord.Embed`: discord嵌入格式
     """
     # 原粹樹脂
-    resin_title = f"{emoji.notes.resin}當前原粹樹脂：{notes.current_resin}/{notes.max_resin}\n"
+    resin_title = f"{emoji.notes.resin}Resin: {notes.current_resin}/{notes.max_resin}\n"
     if notes.current_resin >= notes.max_resin:
-        recover_time = "已額滿！"
+        recover_time = "Full！"
     else:
         day_msg = get_day_of_week(notes.resin_recovery_time)
         recover_time = f'{day_msg} {notes.resin_recovery_time.strftime("%H:%M")}'
-    resin_msg = f"{emoji.notes.resin}全部恢復時間：{recover_time}\n"
+    resin_msg = f"{emoji.notes.resin}Resin time: {recover_time}\n"
     # 每日、週本
-    resin_msg += f"{emoji.notes.commission}每日委託任務："
+    resin_msg += f"{emoji.notes.commission}Commission: "
     resin_msg += (
-        "獎勵已領\n"
+        "Reward\n"
         if notes.claimed_commission_reward is True
-        else "**尚未領獎**\n"
+        else "**Have not received a prize**\n"
         if notes.max_commissions == notes.completed_commissions
-        else f"剩餘 {notes.max_commissions - notes.completed_commissions} 個\n"
+        else f"Remaining {notes.max_commissions - notes.completed_commissions}/4\n"
     )
     if not short_form:
         resin_msg += (
-            f"{emoji.notes.enemies_of_note}週本樹脂減半：剩餘 {notes.remaining_resin_discounts} 次\n"
+            f"{emoji.notes.enemies_of_note}Weekly bosses: Remaining {notes.remaining_resin_discounts} time\n"
         )
     # 洞天寶錢恢復時間
-    resin_msg += f"{emoji.notes.realm_currency}當前洞天寶錢：{notes.current_realm_currency}/{notes.max_realm_currency}\n"
+    resin_msg += f"{emoji.notes.realm_currency}Current Realm Currency: {notes.current_realm_currency}/{notes.max_realm_currency}\n"
     if not short_form and notes.max_realm_currency > 0:
         if notes.current_realm_currency >= notes.max_realm_currency:
-            recover_time = "已額滿！"
+            recover_time = "Full！"
         else:
             day_msg = get_day_of_week(notes.realm_currency_recovery_time)
             recover_time = f'{day_msg} {notes.realm_currency_recovery_time.strftime("%H:%M")}'
-        resin_msg += f"{emoji.notes.realm_currency}全部恢復時間：{recover_time}\n"
+        resin_msg += f"{emoji.notes.realm_currency}Recovery time: {recover_time}\n"
     # 參數質變儀剩餘時間
     if (t := notes.remaining_transformer_recovery_time) is not None:
         if t.days > 0:
-            recover_time = f"剩餘 {t.days} 天"
+            recover_time = f"Remaining {t.days} day"
         elif t.hours > 0:
-            recover_time = f"剩餘 {t.hours} 小時"
+            recover_time = f"Remaining {t.hours} hours"
         elif t.minutes > 0:
-            recover_time = f"剩餘 {t.minutes} 分"
+            recover_time = f"Remaining {t.minutes} minutes"
         elif t.seconds > 0:
-            recover_time = f"剩餘 {t.seconds} 秒"
+            recover_time = f"Remaining {t.seconds} seconds"
         else:
-            recover_time = "可使用"
-        resin_msg += f"{emoji.notes.transformer}參數質變儀　：{recover_time}\n"
+            recover_time = "Be usable"
+        resin_msg += f"{emoji.notes.transformer}Transformer: {recover_time}\n"
     # 探索派遣剩餘時間
     exped_finished = 0
     exped_msg = ""
@@ -229,12 +229,12 @@ async def parse_genshin_notes(
         exped_msg += "． "
         if expedition.finished:
             exped_finished += 1
-            exped_msg += "已完成\n"
+            exped_msg += "Completed\n"
         else:
             day_msg = get_day_of_week(expedition.completion_time)
             exped_msg += f'{day_msg} {expedition.completion_time.strftime("%H:%M")}\n'
 
-    exped_title = f"{emoji.notes.expedition}探索派遣結果：{exped_finished}/{len(notes.expeditions)}\n"
+    exped_title = f"{emoji.notes.expedition}Expedition: {exped_finished}/{len(notes.expeditions)}\n"
 
     # 根據樹脂數量，以樹脂最大值一半作分界，embed顏色從綠色(0x28c828)漸變到黃色(0xc8c828)，再漸變到紅色(0xc82828)
     r = notes.current_resin
@@ -256,7 +256,7 @@ async def parse_genshin_notes(
         _u = await Database.select_one(User, User.discord_id.is_(user.id))
         uid = str(_u.uid_genshin if _u else "")
         embed.set_author(
-            name=f"原神 {get_server_name(uid[0])} {uid}",
+            name=f"Genshin UID {get_server_name(uid[0])} {uid}",
             icon_url=user.display_avatar.url,
         )
     return embed

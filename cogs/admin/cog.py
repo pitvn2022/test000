@@ -16,7 +16,7 @@ from utility import SlashCommandLogger, config
 class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
-        self.presence_string: list[str] = ["原神"]
+        self.presence_string: list[str] = ["Hoyolab"]
         self.change_presence.start()
         self.refresh_genshin_db.start()
 
@@ -25,37 +25,37 @@ class Admin(commands.Cog):
         self.refresh_genshin_db.cancel()
 
     # /status指令：顯示機器人相關狀態
-    @app_commands.command(name="status", description="顯示小幫手狀態")
+    @app_commands.command(name="status", description="Show Bot Status")
     @app_commands.choices(
         option=[
-            Choice(name="機器人連線延遲", value="BOT_LATENCY"),
-            Choice(name="已連接伺服器數量", value="SERVER_COUNT"),
-            Choice(name="已連接伺服器名稱", value="SERVER_NAMES"),
+            Choice(name="Bot connection delay", value="BOT_LATENCY"),
+            Choice(name="Number of connected servers", value="SERVER_COUNT"),
+            Choice(name="Connected Server Name", value="SERVER_NAMES"),
         ]
     )
     @SlashCommandLogger
     async def slash_status(self, interaction: discord.Interaction, option: str):
         match option:
             case "BOT_LATENCY":
-                await interaction.response.send_message(f"延遲：{round(self.bot.latency*1000)} 毫秒")
+                await interaction.response.send_message(f"Delay: {round(self.bot.latency*1000)} ms")
             case "SERVER_COUNT":
-                await interaction.response.send_message(f"已連接 {len(self.bot.guilds)} 個伺服器")
+                await interaction.response.send_message(f"Connected {len(self.bot.guilds)} servers")
             case "SERVER_NAMES":
                 await interaction.response.defer()
                 names = [guild.name for guild in self.bot.guilds]
                 for i in range(0, len(self.bot.guilds), 100):
                     msg = "、".join(names[i : i + 100])
-                    embed = discord.Embed(title=f"已連接伺服器名稱({i + 1})", description=msg)
+                    embed = discord.Embed(title=f"Connected Server Name({i + 1})", description=msg)
                     await interaction.followup.send(embed=embed)
 
     # /system指令：更改機器人狀態、執行任務...
-    @app_commands.command(name="system", description="使用系統命令(更改機器人狀態、執行任務...)")
-    @app_commands.rename(option="選項", param="參數")
+    @app_commands.command(name="system", description="Use system commands (change bot status, execute tasks...)")
+    @app_commands.rename(option="options", param="parameters")
     @app_commands.choices(
         option=[
-            Choice(name="自訂機器人狀態", value="CHANGE_PRESENCE"),
-            Choice(name="立即執行領取每日獎勵", value="CLAIM_DAILY_REWARD"),
-            Choice(name="更新 Enka 新版本資料", value="UPDATE_ENKA_ASSETS"),
+            Choice(name="Customized Bot Status", value="CHANGE_PRESENCE"),
+            Choice(name="Run now to get your daily rewards", value="CLAIM_DAILY_REWARD"),
+            Choice(name="Update Enka New Release Information", value="UPDATE_ENKA_ASSETS"),
         ]
     )
     @SlashCommandLogger
@@ -68,21 +68,21 @@ class Admin(commands.Cog):
                 if param is not None:
                     self.presence_string = param.split(",")
                     await interaction.edit_original_response(
-                        content=f"Presence list已變更為：{self.presence_string}"
+                        content=f"Presence list has been changed to:{self.presence_string}"
                     )
             case "CLAIM_DAILY_REWARD":  # 立即執行領取每日獎勵
-                await interaction.edit_original_response(content="開始執行每日自動簽到")
+                await interaction.edit_original_response(content="Start Daily Auto Check-In")
                 asyncio.create_task(auto_task.DailyReward.execute(self.bot))
             case "UPDATE_ENKA_ASSETS":  # 更新 Enka 新版本素材資料
                 client = enkanetwork.EnkaNetworkAPI()
                 async with client:
                     await client.update_assets()
-                enkanetwork.Assets(lang=enkanetwork.Language.CHT)
-                await interaction.edit_original_response(content="Enka 資料更新完成")
+                enkanetwork.Assets(lang=enkanetwork.Language.EN)
+                await interaction.edit_original_response(content="Enka data update completed")
 
     # /config指令：設定config配置檔案的參數值
-    @app_commands.command(name="config", description="更改config配置內容")
-    @app_commands.rename(option="選項", value="值")
+    @app_commands.command(name="config", description="Change the configuration")
+    @app_commands.rename(option="options", value="number")
     @app_commands.choices(
         option=[
             Choice(name="schedule_daily_reward_time", value="schedule_daily_reward_time"),
@@ -105,8 +105,8 @@ class Admin(commands.Cog):
         await interaction.response.send_message(f"已將{option}的值設為: {value}")
 
     # /maintenance指令：設定遊戲維護時間
-    @app_commands.command(name="maintenance", description="設定遊戲維護時間，輸入0表示將維護時間設定為關閉")
-    @app_commands.rename(month="月", day="日", hour="點", duration="維護幾小時")
+    @app_commands.command(name="maintenance", description="Set the game maintenance time, enter 0 to set the maintenance time to off.")
+    @app_commands.rename(month="month", day="day", hour="hour", duration="few_hours")
     @SlashCommandLogger
     async def slash_maintenance(
         self,
@@ -118,7 +118,7 @@ class Admin(commands.Cog):
     ):
         if month == 0 or day == 0:
             config.game_maintenance_time = None
-            await interaction.response.send_message("已將維護時間設定為：關閉")
+            await interaction.response.send_message("Maintenance time has been set to: Off")
         else:
             now = datetime.now()
             start_time = datetime(
@@ -127,8 +127,8 @@ class Admin(commands.Cog):
             end_time = start_time + timedelta(hours=duration)
             config.game_maintenance_time = (start_time, end_time)
             await interaction.response.send_message(
-                f"已將維護時間設定為：{start_time} ~ {end_time}\n"
-                + "若每日自動簽到時間在此範圍內，請使用 /config 指令更改每日自動簽到時間"
+                f"The maintenance time has been set to：{start_time} ~ {end_time}\n"
+                + "If the daily autosign-in time is within this range, use the /config command to change the daily autosign-in time."
             )
 
     # ======== Loop Task ========
@@ -141,7 +141,7 @@ class Admin(commands.Cog):
         if n < length:
             await self.bot.change_presence(activity=discord.Game(self.presence_string[n]))
         elif n == length:
-            await self.bot.change_presence(activity=discord.Game(f"{len(self.bot.guilds)} 個伺服器"))
+            await self.bot.change_presence(activity=discord.Game(f" in {len(self.bot.guilds)} Servers"))
 
     @change_presence.before_loop
     async def before_change_presence(self):

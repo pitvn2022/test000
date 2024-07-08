@@ -8,7 +8,7 @@ from database import Database, GenshinScheduleNotes, StarrailScheduleNotes, ZZZS
 
 from ... import errors, get_genshin_notes, get_starrail_notes, get_zzz_notes
 
-T_User = TypeVar("T_User", GenshinScheduleNotes, StarrailScheduleNotes, ZZZScheduleNotes)
+T_User = TypeVar("T_User", GenshinScheduleNotes, StarrailScheduleNotes)
 
 
 class CheckResult(NamedTuple):

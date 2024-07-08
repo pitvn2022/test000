@@ -12,23 +12,23 @@ from .ui_genshin import SpiralAbyssUI
 from .ui_starrail import ChooseAbyssModeButton, ForgottenHallUI
 
 
-class SpiralAbyssCog(commands.Cog, name="深境螺旋"):
+class SpiralAbyssCog(commands.Cog, name="abyss"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="abyss深淵紀錄", description="查詢深境螺旋紀錄")
+    @app_commands.command(name="abyss", description="Retrieve Spiral Abyss records")
     @app_commands.checks.cooldown(1, config.slash_cmd_cooldown)
-    @app_commands.rename(game="遊戲", season="時間", user="使用者")
-    @app_commands.describe(season="選擇本期、上期或是歷史紀錄", user="查詢其他成員的資料，不填寫則查詢自己")
+    @app_commands.rename(game="game", season="season", user="user")
+    @app_commands.describe(season="Select current period, previous period, or historical records", user="Query the data of other members. If left blank, it will query your own data")
     @app_commands.choices(
         game=[
-            Choice(name="原神", value="genshin"),
-            Choice(name="星穹鐵道", value="hkrpg"),
+            Choice(name="Genshin Impact", value="genshin"),
+            Choice(name="Honkai: Star Rail", value="hkrpg"),
         ],
         season=[
-            Choice(name="本期紀錄", value="THIS_SEASON"),
-            Choice(name="上期紀錄", value="PREVIOUS_SEASON"),
-            Choice(name="歷史紀錄", value="HISTORICAL_RECORD"),
+            Choice(name="Current", value="THIS_SEASON"),
+            Choice(name="Previous", value="PREVIOUS_SEASON"),
+            Choice(name="Historical", value="HISTORICAL_RECORD"),
         ],
     )
     @custom_log.SlashCommandLogger
@@ -61,7 +61,7 @@ class SpiralAbyssCog(commands.Cog, name="深境螺旋"):
     ):
         if isinstance(error, app_commands.CommandOnCooldown):
             await interaction.response.send_message(
-                embed=EmbedTemplate.error(f"使用指令的間隔為{config.slash_cmd_cooldown}秒，請稍後再使用~"),
+                embed=EmbedTemplate.error(f"The cooldown period for using commands is {config.slash_cmd_cooldown} seconds. Please try again later~"),
                 ephemeral=True,
             )
 
@@ -71,12 +71,12 @@ async def setup(client: commands.Bot):
 
     # -------------------------------------------------------------
     # 下面為Context Menu指令
-    @client.tree.context_menu(name="深淵紀錄(上期)")
+    @client.tree.context_menu(name="previous abyss record")
     @custom_log.ContextCommandLogger
     async def context_abyss_previous(interaction: discord.Interaction, user: discord.User):
         await SpiralAbyssUI.abyss(interaction, user, "PREVIOUS_SEASON")
 
-    @client.tree.context_menu(name="深淵紀錄(本期)")
+    @client.tree.context_menu(name="abyss record")
     @custom_log.ContextCommandLogger
     async def context_abyss(interaction: discord.Interaction, user: discord.User):
         await SpiralAbyssUI.abyss(interaction, user, "THIS_SEASON")

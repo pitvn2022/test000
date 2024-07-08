@@ -74,22 +74,22 @@ def draw_record_card(
 
     s = user_stats.stats
     stat_list = [
-        (s.days_active, "活躍天數"),
-        (s.achievements, "成就達成數"),
-        (s.characters, "獲得角色數"),
-        (s.anemoculi, "風神瞳"),
-        (s.geoculi, "岩神瞳"),
-        (s.electroculi, "雷神瞳"),
-        (s.dendroculi, "草神瞳"),
-        (s.hydroculi, "水神瞳"),
-        (s.unlocked_waypoints, "解鎖傳送點"),
-        (s.unlocked_domains, "解鎖秘境"),
-        (s.spiral_abyss, "深境螺旋"),
-        (s.luxurious_chests, "華麗的寶箱數"),
-        (s.precious_chests, "珍貴的寶箱數"),
-        (s.exquisite_chests, "精緻的寶箱數"),
-        (s.common_chests, "普通的寶箱數"),
-        (s.remarkable_chests, "奇饋寶箱數"),
+        (s.days_active, "Days Active"),
+        (s.achievements, "Achievements"),
+        (s.characters, "Characters"),
+        (s.anemoculi, "Anemoculi"),
+        (s.geoculi, "Geoculi"),
+        (s.electroculi, "Electroculi"),
+        (s.dendroculi, "Dendroculi"),
+        (s.hydroculi, "Hydroculi"),
+        (s.unlocked_waypoints, "Waypoints"),
+        (s.unlocked_domains, "Domains"),
+        (s.spiral_abyss, "Spiral Abyss"),
+        (s.luxurious_chests, "LuxuriousChests"),
+        (s.precious_chests, "PreciousChests"),
+        (s.exquisite_chests, "ExquisiteChests"),
+        (s.common_chests, "CommonChests"),
+        (s.remarkable_chests, "RemarkableChests"),
     ]
 
     for n, stat in enumerate(stat_list):
@@ -140,19 +140,19 @@ def draw_exploration_card(
     grey = (230, 230, 230, 255)
 
     explored_list = {  # {id: [地名, 探索度]}
-        1: ["蒙德", 0],
-        2: ["璃月", 0],
-        3: ["雪山", 0],
-        4: ["稻妻", 0],
-        5: ["淵下宮", 0],
-        6: ["層岩·表", 0],
-        7: ["層岩·底", 0],
-        8: ["須彌", 0],
-        9: ["楓丹", 0],
-        12: ["沉玉谷·南陵", 0],
-        13: ["沉玉谷·上谷", 0],
+        1: ["Mondstadt", 0],
+        2: ["Liyue", 0],
+        3: ["Dragonspine", 0],
+        4: ["Inazuma", 0],
+        5: ["Enkanomiya", 0],
+        6: ["Chasm-Up", 0],
+        7: ["Chasm-Low", 0],
+        8: ["Sumeru", 0],
+        9: ["Fontaine", 0],
+        12: ["Chenyu-Up", 0],
+        13: ["Chenyu-South", 0],
     }
-    offering_list = [["忍冬之樹", 0], ["神櫻眷顧", 0], ["流明石", 0], ["夢之樹", 0], ["露景泉", 0]]
+    offering_list = [["Frostbearing", 0], ["SakuraFavor", 0], ["Lumenstone", 0], ["DreamTree", 0], ["Lucine", 0]]
 
     for e in user_stats.explorations:
         if e.id not in explored_list:
@@ -172,9 +172,9 @@ def draw_exploration_card(
 
     stat_list: list[tuple[str, float, str]] = []  # (探索/等級, 數值, 地名)
     for id, e in explored_list.items():
-        stat_list.append(("探索", e[1], e[0]))
+        stat_list.append(("Exploration", e[1], e[0]))
     for o in offering_list:
-        stat_list.append(("等級", o[1], o[0]))
+        stat_list.append(("Level", o[1], o[0]))
 
     for n, stat in enumerate(stat_list):
         column = int(n % 3)
@@ -333,9 +333,9 @@ async def draw_abyss_card(
                     constellation = next(
                         (c.constellation for c in characters if c.id == character.id), 0
                     )  # 匹配角色ID並取得命座
-                    text = f"{constellation}命 {character.level}級"
+                    text = f"C{constellation} Level {character.level}"
                 else:
-                    text = f"{character.level}級"
+                    text = f"Level {character.level}"
                 draw_text(
                     img,
                     (x + character_size[0] / 2, y + character_size[1] * 0.90),

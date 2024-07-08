@@ -15,12 +15,12 @@ from .ui import SearchResultsDropdown
 StrCategory = Literal["角色", "武器", "聖遺物", "物品/食物", "成就", "七聖召喚"]
 
 
-class Search(commands.Cog, name="資料搜尋"):
+class Search(commands.Cog, name="search"):
     def __init__(self, bot: commands.Bot, genshin_db_data: genshin_db.GenshinDbAllData):
         self.bot = bot
         self.db = genshin_db_data
 
-    @app_commands.command(name="search搜尋資料庫", description="搜尋原神資料庫，包含了角色、武器、各項物品、成就、七聖召喚")
+    @app_commands.command(name="zbeta_search", description="Search Genshin Impact database, including characters, weapons, various items, achievements, etc ..")
     @app_commands.rename(category="類別", item_name="名稱")
     @app_commands.describe(category="選擇要搜尋的類別")
     @app_commands.choices(

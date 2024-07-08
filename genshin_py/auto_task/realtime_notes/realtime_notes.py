@@ -42,15 +42,15 @@ class RealtimeNotes:
         await cls._lock.acquire()
         cls._bot = bot
         try:
-            LOG.System("自動檢查樹脂開始")
+            LOG.System("Start automatic resin checking")
             await asyncio.gather(
-                cls._check_games_note(GenshinScheduleNotes, "原神", check_genshin_notes),
-                cls._check_games_note(StarrailScheduleNotes, "星穹鐵道", check_starrail_notes),
-                cls._check_games_note(ZZZScheduleNotes, "絕區零", check_zzz_notes),
+                cls._check_games_note(GenshinScheduleNotes, "Genshin Impact", check_genshin_notes),
+                cls._check_games_note(StarrailScheduleNotes, "Honkai: Star Rail", check_starrail_notes),
+                cls._check_games_note(ZZZScheduleNotes, "Zenless Zone Zero", check_zzz_notes),
             )
         except Exception as e:
             sentry_sdk.capture_exception(e)
-            LOG.Error(f"自動排程 RealtimeNotes 發生錯誤：{e}")
+            LOG.Error(f"Automatic schedule Real-time Notes encountered an error：{e}")
         finally:
             cls._lock.release()
 
@@ -91,7 +91,7 @@ class RealtimeNotes:
                 await cls._send_message(user, r.message, r.embed)
             # 使用者之間的檢查間隔時間
             await asyncio.sleep(config.schedule_loop_delay)
-        LOG.System(f"{game_name}自動檢查即時便箋結束，{count}/{len(user_ids)} 人已檢查")
+        LOG.System(f"{game_name} automatic real-time notes check ended, {count}/{len(user_ids)} people have been checked")
 
     @classmethod
     async def _send_message(cls, user: T_User, message: str, embed: discord.Embed) -> None:

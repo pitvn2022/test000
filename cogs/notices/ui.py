@@ -38,7 +38,7 @@ class View(discord.ui.View):
             and (interaction.created_at - self.last_response_time).seconds < 3
         ):
             await interaction.response.send_message(
-                embed=EmbedTemplate.normal("短時間內(太多人)點選，請稍後幾秒再試..."), ephemeral=True
+                embed=EmbedTemplate.normal("Too many clicks in a short period. Please try again in a few seconds..."), ephemeral=True
             )
             return False
         else:

@@ -13,18 +13,18 @@ from utility import EmbedTemplate, config, custom_log
 from .ui import UidDropdown, UIDModal
 
 
-class UIDSettingCog(commands.Cog, name="UID 設定"):
+class UIDSettingCog(commands.Cog, name="uid_settings"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="uid設定", description="保存指定的原神UID")
-    @app_commands.rename(game="遊戲")
+    @app_commands.command(name="uid_settings", description="Save the specified hoyolab UID")
+    @app_commands.rename(game="game")
     @app_commands.choices(
         game=[
-            Choice(name="原神", value="genshin"),
-            Choice(name="崩壞3", value="honkai3rd"),
-            Choice(name="星穹鐵道", value="hkrpg"),
-            Choice(name="絕區零", value="nap"),
+            Choice(name="Genshin Impact", value="genshin"),
+            Choice(name="Honkai Impact 3", value="honkai3rd"),
+            Choice(name="Honkai: Star Rail", value="hkrpg"),
+            Choice(name="Zenless Zone Zero", value="nap"),
         ]
     )
     @custom_log.SlashCommandLogger
@@ -58,7 +58,7 @@ class UIDSettingCog(commands.Cog, name="UID 設定"):
                     genshin_py.get_game_accounts(interaction.user.id, game),
                 )
                 if len(accounts) == 0:
-                    raise Exception("此帳號內沒有任何角色")
+                    raise Exception("There are no characters in this account")
             except Exception as e:
                 await interaction.edit_original_response(embed=EmbedTemplate.error(e))
             else:

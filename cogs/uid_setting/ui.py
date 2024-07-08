@@ -16,7 +16,7 @@ class UIDModal(discord.ui.Modal, title="提交UID"):
 
     uid: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
         label="UID",
-        placeholder="請輸入遊戲內的UID(9或10位數字)",
+        placeholder="Please enter the UID (9 or 10 digits) of the game.",
         required=True,
         min_length=9,
         max_length=10,
@@ -54,13 +54,13 @@ class UidDropdown(discord.ui.Select):
     ):
         options = [
             discord.SelectOption(
-                label=f"[{get_server_name(account.server)}] {account.uid}",
+                label=f"[{get_server_name(str(account.uid)[0])}] {account.uid}",
                 description=f"Lv.{account.level} {account.nickname}",
                 value=str(i),
             )
             for i, account in enumerate(accounts)
         ]
-        super().__init__(placeholder="請選擇要保存的UID：", options=options)
+        super().__init__(placeholder="Please select the UID you want to used:", options=options)
         self.accounts = accounts
         self.game = game
 
@@ -68,7 +68,7 @@ class UidDropdown(discord.ui.Select):
         uid = self.accounts[int(self.values[0])].uid
         user = await Database.select_one(User, User.discord_id.is_(interaction.user.id))
         if user is None:
-            raise (ValueError("找不到此使用者"))
+            raise (ValueError("This user cannot be found"))
         match self.game:
             case genshin.Game.GENSHIN:
                 user.uid_genshin = uid
@@ -78,5 +78,5 @@ class UidDropdown(discord.ui.Select):
                 user.uid_zzz = uid
         await Database.insert_or_replace(user)
         await interaction.response.edit_message(
-            embed=EmbedTemplate.normal(f"角色UID: {uid} 已設定完成"), view=None
+            embed=EmbedTemplate.normal(f"UID {uid} set completed"), view=None
         )

@@ -55,13 +55,13 @@ class Showcase:
 
         description = (
             f"「{player.signature}」\n"
-            f"開拓等級：{player.level}\n"
-            f"邂逅角色：{player.characters}\n"
-            f"達成成就：{player.achievements}\n"
+            f"Player Level：{player.level}\n"
+            f"Player Characters：{player.characters}\n"
+            f"Player Achievements：{player.achievements}\n"
         )
 
         if self.is_cached_data is True:
-            description += "(目前無法連接 API，顯示的為快取資料)\n"
+            description += "(Currently unable to connect to the API, cached data is displayed)\n"
 
         embed = discord.Embed(title=player.name, description=description)
         embed.set_thumbnail(url=self.client.get_icon_url(player.avatar.icon))
@@ -89,7 +89,7 @@ class Showcase:
             data_dict["player"]["space_info"] = {}
             data_hsrcard = StarRailApiDataV2.parse_raw(json.dumps(data_dict, ensure_ascii=False))
 
-            async with HonkaiCard(lang="cht") as card_creater:
+            async with HonkaiCard(lang="en") as card_creater:
                 result = await card_creater.creat(self.uid, data_hsrcard, index)
                 image = result.card[0].card
             self.image_cache[index] = image
@@ -107,13 +107,13 @@ class Showcase:
         """取得角色屬性資料的嵌入訊息"""
 
         embed = self.get_default_embed(index)
-        embed.title = (embed.title + " 角色面板") if embed.title is not None else "角色面板"
+        embed.title = (embed.title + " Character") if embed.title is not None else "Character"
 
         character = self.data.characters[index]
 
         # 基本資料
         embed.add_field(
-            name="角色資料",
+            name="Character",
             value=f"星魂：{character.eidolon}\n" + f"等級：Lv. {character.level}\n",
         )
         # 武器
@@ -154,11 +154,11 @@ class Showcase:
             attr_dict[stat.name][1] += stat.value * 100 if stat.is_percent else stat.value
 
         # 將傷害提高應用到所有屬性的傷害提高
-        if "傷害提高" in attr_dict:
-            v = attr_dict["傷害提高"][0] + attr_dict["傷害提高"][1]
-            del attr_dict["傷害提高"]
-            for key in attr_dict:
-                if "傷害提高" in key:
+        if "damage increase" in attr_dict:
+            v = attr_dict["damage increase"][0] + attr_dict["damage increase"][1]
+            del attr_dict["damage increase"]
+            for key in list(attr_dict.keys()):  # Iterate over a copy of keys to avoid modification during iteration
+                if "damage increase" in key:
                     attr_dict[key][1] += v
 
         value = ""
@@ -172,7 +172,7 @@ class Showcase:
         """取得角色遺器資料的嵌入訊息"""
 
         embed = self.get_default_embed(index)
-        embed.title = (embed.title + " 聖遺物") if embed.title is not None else "聖遺物"
+        embed.title = (embed.title + "Artifact") if embed.title is not None else "Artifact"
 
         character = self.data.characters[index]
         if character.relics is None:
@@ -181,7 +181,7 @@ class Showcase:
         for relic in character.relics:
             # 主詞條
             name = (
-                relic.main_affix.name.removesuffix("傷害提高")
+                relic.main_affix.name.removesuffix("Damage increase")
                 .removesuffix("效率")
                 .removesuffix("加成")
             )
@@ -197,7 +197,7 @@ class Showcase:
         """取得角色遺器詞條數的嵌入訊息"""
 
         embed = self.get_default_embed(index)
-        embed.title = (embed.title + "詞條數") if embed.title is not None else "詞條數"
+        embed.title = (embed.title + "Attributes") if embed.title is not None else "Sttributes"
 
         character = self.data.characters[index]
         relics = character.relics

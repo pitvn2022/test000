@@ -36,7 +36,7 @@ async def check_threshold(user: GenshinScheduleNotes, notes: genshin.models.Note
             hours=user.threshold_resin, seconds=10
         ):
             msg += (
-                "樹脂已經額滿啦！" if notes.remaining_resin_recovery_time <= timedelta(0) else "樹脂快要額滿啦！"
+                "Resin is full！" if notes.remaining_resin_recovery_time <= timedelta(0) else "Resin is almost full.！"
             )
         # 設定下次檢查時間，當樹脂完全額滿時，預計6小時後再檢查；否則依照(預計完成-使用者設定的時間)
         next_check_time.append(
@@ -50,9 +50,9 @@ async def check_threshold(user: GenshinScheduleNotes, notes: genshin.models.Note
             hours=user.threshold_currency, seconds=10
         ):
             msg += (
-                "洞天寶錢已經額滿啦！"
+                "Realm Currency is full！"
                 if notes.remaining_realm_currency_recovery_time <= timedelta(0)
-                else "洞天寶錢快要額滿啦！"
+                else "Realm Currency is almost full！"
             )
         next_check_time.append(
             datetime.now() + timedelta(hours=6)
@@ -71,9 +71,9 @@ async def check_threshold(user: GenshinScheduleNotes, notes: genshin.models.Note
             hours=user.threshold_transformer, seconds=10
         ):
             msg += (
-                "質變儀已經完成了！"
+                "Transformer is ready！"
                 if notes.remaining_transformer_recovery_time <= timedelta(0)
-                else "質變儀快要完成了！"
+                else "Transformer is almost ready！"
             )
         next_check_time.append(
             datetime.now() + timedelta(hours=6)
@@ -91,7 +91,7 @@ async def check_threshold(user: GenshinScheduleNotes, notes: genshin.models.Note
             hours=user.threshold_expedition, seconds=10
         ):
             msg += (
-                "探索派遣已經完成了！" if longest_expedition.remaining_time <= timedelta(0) else "探索派遣快要完成了！"
+                "Expedition is complete.！" if longest_expedition.remaining_time <= timedelta(0) else "Expedition is almost complete！"
             )
         next_check_time.append(
             datetime.now() + timedelta(hours=6)
@@ -103,7 +103,7 @@ async def check_threshold(user: GenshinScheduleNotes, notes: genshin.models.Note
         # 當現在時間已超過設定的檢查時間
         if datetime.now() >= user.check_commission_time:
             if not notes.claimed_commission_reward:
-                msg += "今日的委託任務還未完成！"
+                msg += "Today's commission is still pending！"
             # 下次檢查時間為今天+1天，並更新至資料庫
             user.check_commission_time += timedelta(days=1)
         next_check_time.append(user.check_commission_time)

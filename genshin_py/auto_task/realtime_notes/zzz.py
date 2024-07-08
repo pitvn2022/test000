@@ -15,7 +15,7 @@ async def check_zzz_notes(user: ZZZScheduleNotes) -> CheckResult | None:
         notes = await get_realtime_notes(user)
     except Exception as e:
         return CheckResult(
-            "絕區零自動檢查即時便箋時發生錯誤，預計5小時後再檢查。", EmbedTemplate.error(e)
+            "An error occurred during the automatic check of Zenless Zone Zero real-time notes, expected to check again in 5 hours.", EmbedTemplate.error(e)
         )
 
     if not isinstance(notes, genshin.models.ZZZNotes):
@@ -37,7 +37,7 @@ async def check_threshold(user: ZZZScheduleNotes, notes: genshin.models.ZZZNotes
         if timedelta(seconds=notes.battery_charge.seconds_till_full) <= timedelta(
             hours=user.threshold_battery
         ):
-            msg += "電量已經充滿啦！" if notes.battery_charge.is_full else "電量快要充滿啦！"
+            msg += "The battery is full!" if notes.battery_charge.is_full else "The battery is almost full!"
         next_check_time.append(
             datetime.now() + timedelta(hours=6)
             if notes.battery_charge.is_full
@@ -50,7 +50,7 @@ async def check_threshold(user: ZZZScheduleNotes, notes: genshin.models.ZZZNotes
         # 當現在時間已超過設定的檢查時間
         if datetime.now() >= user.check_daily_engagement_time:
             if notes.engagement.current < notes.engagement.max:
-                msg += "今日活躍度還未完成！"
+                msg += "Today's Daily Engagement is not yet complete.！"
             # 下次檢查時間為今天+1天，並更新至資料庫
             user.check_daily_engagement_time += timedelta(days=1)
         next_check_time.append(user.check_daily_engagement_time)

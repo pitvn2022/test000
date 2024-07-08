@@ -16,13 +16,13 @@ from utility.custom_log import SlashCommandLogger
 from .ui import DropdownView
 
 
-class CharactersCog(commands.Cog, name="角色一覽"):
+class CharactersCog(commands.Cog, name="character"):
     """斜線指令"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="character角色一覽", description="公開展示我的所有角色")
+    @app_commands.command(name="zbeta_character_overview", description="Publicly display all of my characters")
     @app_commands.rename(game="遊戲", sort_key="排序", user="使用者")
     @app_commands.describe(game="選擇遊戲", user="查詢其他成員的資料，不填寫則查詢自己")
     @app_commands.choices(

@@ -10,45 +10,45 @@ import genshin_py
 from utility import EmbedTemplate, custom_log
 
 
-class DailyCheckinCog(commands.Cog, name="每日簽到"):
+class DailyCheckinCog(commands.Cog, name="daily_check-in"):
     """斜線指令"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="daily每日簽到", description="領取Hoyolab每日簽到獎勵")
-    @app_commands.rename(game="遊戲", is_geetest="設定圖形驗證", user="使用者")
+    @app_commands.command(name="daily_check-in", description="Get Hoyolab Daily Check-In")
+    @app_commands.rename(game="genshin", is_geetest="geetest", user="user")
     @app_commands.choices(
         game=[
-            Choice(name="原神", value="原神"),
-            Choice(name="崩壞3", value="崩壞3"),
-            Choice(name="星穹鐵道", value="星穹鐵道"),
-            Choice(name="絕區零", value="絕區零"),
-            Choice(name="未定事件簿(台服)", value="未定事件簿(台服)"),
-            Choice(name="未定事件簿(國際服)", value="未定事件簿(國際服)"),
+            Choice(name="Genshin Impact", value="Genshin Impact"),
+            Choice(name="Honkai Impact 3", value="Honkai Impact 3"),
+            Choice(name="Honkai: Star Rail", value="Honkai: Star Rail"),
+            Choice(name="Zenless Zone Zero", value="Zenless Zone Zero"),
+            Choice(name="Tears of Themis", value="Tears of Themis"),
+            Choice(name="Tears of Themis(TW)", value="Tears of Themis(TW)"),
         ]
     )
     @app_commands.choices(
         is_geetest=[
-            Choice(name="是", value="是"),
-            Choice(name="否", value="否"),
+            Choice(name="number", value="是"),
+            Choice(name="deny", value="否"),
         ]
     )
     @custom_log.SlashCommandLogger
     async def slash_daily(
         self,
         interaction: discord.Interaction,
-        game: Literal["原神", "崩壞3", "星穹鐵道", "絕區零", "未定事件簿(台服)", "未定事件簿(國際服)"],
+        game: Literal["Genshin Impact", "Honkai Impact 3", "Honkai: Star Rail", "Zenless Zone Zero", "Tears of Themis", "Tears of Themis(TW)"],
         is_geetest: Literal["是", "否"] = "否",
         user: Optional[discord.User] = None,
     ):
         choice = {
-            "has_genshin": True if game == "原神" else False,
-            "has_honkai3rd": True if game == "崩壞3" else False,
-            "has_starrail": True if game == "星穹鐵道" else False,
-            "has_zzz": True if game == "絕區零" else False,
-            "has_themis": True if game == "未定事件簿(國際服)" else False,
-            "has_themis_tw": True if game == "未定事件簿(台服)" else False,
+            "has_genshin": True if game == "Genshin Impact" else False,
+            "has_honkai3rd": True if game == "Honkai Impact 3" else False,
+            "has_starrail": True if game == "Honkai: Star Rail" else False,
+            "has_themis": True if game == "Tears of Themis" else False,
+            "has_zzz": True if game == "Zenless Zone Zero" else False,
+            "has_themis_tw": True if game == "Tears of Themis(TW)" else False,
             "is_geetest": True if is_geetest == "是" else False,
         }
 

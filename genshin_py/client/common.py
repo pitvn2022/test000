@@ -39,7 +39,7 @@ async def get_client(
     if check is False or user is None:
         raise UserDataNotFound(msg)
 
-    client = genshin.Client(lang="zh-tw")
+    client = genshin.Client(lang="vi-vn")
     match game:
         case genshin.Game.GENSHIN:
             uid = user.uid_genshin or 0
@@ -117,7 +117,7 @@ async def set_cookie(user_id: int, cookie: str, games: Sequence[genshin.Game]) -
     """
     LOG.Info(f"設定 {LOG.User(user_id)} 的Cookie：{cookie}")
 
-    client = genshin.Client(lang="zh-tw")
+    client = genshin.Client(lang="vi-vn")
     client.set_cookies(cookie)
 
     # 先以國際服 client 取得帳號資訊，若失敗則嘗試使用中國服 client
@@ -143,41 +143,41 @@ async def set_cookie(user_id: int, cookie: str, games: Sequence[genshin.Game]) -
         if len(gs_accounts) == 1:
             user.uid_genshin = gs_accounts[0].uid
         elif len(gs_accounts) > 1:
-            character_list.append(f"{len(gs_accounts)}名原神角色")
+            character_list.append(f"{len(gs_accounts)}Genshin Impact Character")
 
     if genshin.Game.HONKAI in games:
         user.cookie_honkai3rd = cookie
         if len(hk3_accounts) == 1:
             user.uid_honkai3rd = hk3_accounts[0].uid
         elif len(hk3_accounts) > 1:
-            character_list.append(f"{len(hk3_accounts)}名崩壞3角色")
+            character_list.append(f"{len(hk3_accounts)}Honkai Impact 3 Character")
 
     if genshin.Game.STARRAIL in games:
         user.cookie_starrail = cookie
         if len(sr_accounts) == 1:
             user.uid_starrail = sr_accounts[0].uid
         if len(sr_accounts) > 1:
-            character_list.append(f"{len(sr_accounts)}名星穹鐵道角色")
+            character_list.append(f"{len(sr_accounts)}Honkai: Star Rail Character")
 
     if genshin.Game.ZZZ in games:
         user.cookie_zzz = cookie
         if len(zzz_accounts) == 1:
             user.uid_zzz = zzz_accounts[0].uid
         if len(zzz_accounts) > 1:
-            character_list.append(f"{len(zzz_accounts)}名絕區零角色")
+            character_list.append(f"{len(zzz_accounts)}Zenless Zone Zero Character")
 
     if genshin.Game.THEMIS in games:
         user.cookie_themis = cookie
 
     await Database.insert_or_replace(user)
-    LOG.Info(f"{LOG.User(user_id)} Cookie設置成功")
+    LOG.Info(f"{LOG.User(user_id)} Cookie Setting Successful")
 
-    result = "Cookie已設定完成！"
+    result = "Cookie has been set！"
     # 若有多名角色，則提示使用者要設定 UID
     if len(character_list) > 0:
         result += (
-            f"\n你的帳號內共有{'、'.join(character_list)}，"
-            + f"請使用 {get_app_command_mention('uid設定')} 指定要保存的角色。"
+            f"\nYour account has a total of{'、'.join(character_list)}，"
+            + f"Please use {get_app_command_mention('uid settings')} Specify the roles to be saved。"
         )
     return result
 
@@ -238,7 +238,7 @@ async def claim_daily_reward(
         any([has_genshin, has_honkai3rd, has_starrail, has_zzz, has_themis, has_themis_tw])
         is False
     ):
-        return "未選擇任何遊戲簽到"
+        return "Did not select any game to sign in"
 
     # 使用者保存的 geetest 驗證資料
     gt_challenge: GeetestChallenge | None = None
@@ -285,50 +285,50 @@ async def _claim_reward(
 ) -> str:
     """遊戲簽到函式"""
     game_name = {
-        genshin.Game.GENSHIN: "原神",
-        genshin.Game.HONKAI: "崩壞3",
-        genshin.Game.STARRAIL: "星穹鐵道",
-        genshin.Game.ZZZ: "絕區零",
-        genshin.Game.THEMIS: "未定事件簿(國)",
-        genshin.Game.THEMIS_TW: "未定事件簿(台)",
+        genshin.Game.GENSHIN: "Genshin Impact",
+        genshin.Game.HONKAI: "Honkai Impact 3",
+        genshin.Game.STARRAIL: "Honkai: Star Rail",
+        genshin.Game.ZZZ: "Zenless Zone Zero",
+        genshin.Game.THEMIS: "Tears of Themis",
+        genshin.Game.THEMIS_TW: "Tears of Themis(TW)",
     }
 
     try:
         reward = await client.claim_daily_reward(game=game, challenge=gt_challenge)
     except genshin.errors.AlreadyClaimed:
-        return f"{game_name[game]}今日獎勵已經領過了！"
+        return f"{game_name[game]}Today's reward has already been claimed.！"
     except genshin.errors.InvalidCookies:
-        return "Cookie已失效，請從Hoyolab重新取得新Cookie。"
+        return "Cookie has expired, please get a new one from Hoyolab.。"
     except genshin.errors.DailyGeetestTriggered as exception:
         # 使用者選擇設定圖形驗證，回傳網址
         if is_geetest is True and config.geetest_solver_url is not None:
             url = config.geetest_solver_url
             url += f"/geetest/{game}/{user_id}?gt={exception.gt}&challenge={exception.challenge}"
-            return f"請到網站上解鎖圖形驗證：[點我開啟連結]({url})\n若出現錯誤則再次使用本指令重新產生連結"
+            return f"Please go to the website to unlock the graphic validation: [click me to open the link].({url})\nIf an error occurs, use this command again to regenerate the link."
         # 提示使用者可以設定圖形驗證
         if config.geetest_solver_url is not None:
             command_str = get_app_command_mention("daily每日簽到")
-            return f"{game_name[game]}簽到失敗：受到圖形驗證阻擋，請使用 {command_str} 指令選擇「設定圖形驗證」。"
+            return f"{game_name[game]}Failed to sign in: Graphical validation is blocked. {command_str} Command to select Setup Graphic Validation "
         link: str = {
             genshin.Game.GENSHIN: "https://act.hoyolab.com/ys/event/signin-sea-v3/index.html?act_id=e202102251931481",
             genshin.Game.HONKAI: "https://act.hoyolab.com/bbs/event/signin-bh3/index.html?act_id=e202110291205111",
             genshin.Game.STARRAIL: "https://act.hoyolab.com/bbs/event/signin/hkrpg/index.html?act_id=e202303301540311",
             genshin.Game.ZZZ: "https://act.hoyolab.com/bbs/event/signin/zzz/index.html?act_id=e202406031448091",
         }.get(game, "")
-        return f"{game_name[game]}簽到失敗：受到圖形驗證阻擋，請到 [官網]({link}) 上手動簽到。"
+        return f"{game_name[game]}Failed to sign in: Graphical verification is blocked, please go to [Official Website].({link}) Getting Started。"
     except Exception as e:
         if isinstance(e, genshin.errors.GenshinException) and e.retcode == -10002:
-            return f"{game_name[game]}簽到失敗，目前登入的帳號未查詢到角色資料。"
+            return f"{game_name[game]}Sign-in failed, no character information was found for the currently logged-in account."
         if isinstance(e, genshin.errors.GenshinException) and e.retcode == 50000:
-            return f"{game_name[game]}請求失敗，請稍後重試。"
+            return f"{game_name[game]}The request failed. Please try again later."
 
         LOG.FuncExceptionLog(user_id, "claimDailyReward", e)
         if retry > 0:
             await asyncio.sleep(1)
             return await _claim_reward(user_id, client, game, is_geetest, gt_challenge, retry - 1)
 
-        LOG.Error(f"{LOG.User(user_id)} {game_name[game]}簽到失敗")
+        LOG.Error(f"{LOG.User(user_id)} {game_name[game]}Failed to sign in")
         sentry_sdk.capture_exception(e)
-        return f"{game_name[game]}簽到失敗：{e}。"
+        return f"{game_name[game]}Failed to sign in：{e}。"
     else:
-        return f"{game_name[game]}今日簽到成功，獲得 {reward.amount}x {reward.name}！"
+        return f"{game_name[game]} Sign in today and get {reward.amount}x {reward.name}！"

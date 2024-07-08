@@ -8,22 +8,22 @@ from utility import custom_log
 from .ui import ConfirmButton
 
 
-class ClearSettingCog(commands.Cog, name="清除設定"):
+class ClearSettingCog(commands.Cog, name="user_data"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="清除資料", description="刪除使用者所有保存在小幫手內的個人資料")
+    @app_commands.command(name="user_data", description="Delete all user's personal information saved in Bot.")
     @custom_log.SlashCommandLogger
     async def slash_clear(self, interaction: discord.Interaction):
         view = ConfirmButton()
-        await interaction.response.send_message("是否確定刪除？", view=view, ephemeral=True)
+        await interaction.response.send_message("Is it confirmed to be deleted?", view=view, ephemeral=True)
 
         await view.wait()
         if view.value is True:
             await Database.delete_all(interaction.user.id)
-            await interaction.edit_original_response(content="使用者資料已全部刪除", view=None)
+            await interaction.edit_original_response(content="All user information has been deleted", view=None)
         else:
-            await interaction.edit_original_response(content="取消指令", view=None)
+            await interaction.edit_original_response(content="Cancel command", view=None)
 
 
 async def setup(client: commands.Bot):

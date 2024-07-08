@@ -52,27 +52,27 @@ class RealtimeNotes:
             await interaction.edit_original_response(embed=embed)
 
 
-class RealtimeNotesCog(commands.Cog, name="即時便箋"):
+class RealtimeNotesCog(commands.Cog, name="realtime_notes"):
     """取得使用者即時便箋資訊(樹脂、洞天寶錢、派遣...等)"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @app_commands.command(
-        name="notes即時便箋", description="查詢即時便箋，包含樹脂、洞天寶錢、探索派遣...等"
+        name="realtime_notes", description="Check real-time notes, including resin, realm currency, expedition dispatch, etc"
     )
-    @app_commands.rename(game="遊戲", short_form="顯示格式", user="使用者")
+    @app_commands.rename(game="game", short_form="short_form", user="user")
     @app_commands.describe(
-        short_form="選擇顯示完整或簡約格式(省略每日、週本、探索派遣)",
-        user="查詢其他成員的資料，不填寫則查詢自己",
+        short_form="Choose to display in full or simplified format (comit daily, weekly, expedition dispatch)", 
+        user="Retrieve data for other members; leave blank to retrieve your own.",
     )
     @app_commands.choices(
         game=[
-            Choice(name="原神", value="genshin"),
-            Choice(name="星穹鐵道", value="hkrpg"),
-            Choice(name="絕區零", value="nap"),
+            Choice(name="Genshin Impact", value="genshin"),
+            Choice(name="Honkai: Star Rail", value="hkrpg"),
+            Choice(name="Zenless Zone Zero", value="nap"),
         ],
-        short_form=[Choice(name="完整", value="完整"), Choice(name="簡約", value="簡約")],
+        short_form=[Choice(name="Yes", value="完整"), Choice(name="No", value="簡約")],
     )
     @SlashCommandLogger
     async def slash_notes(
@@ -90,7 +90,7 @@ class RealtimeNotesCog(commands.Cog, name="即時便箋"):
 async def setup(client: commands.Bot):
     await client.add_cog(RealtimeNotesCog(client))
 
-    @client.tree.context_menu(name="即時便箋(原神)")
+    @client.tree.context_menu(name="realtime notes")
     @ContextCommandLogger
     async def context_notes(interaction: discord.Interaction, user: discord.User):
         await RealtimeNotes.notes(interaction, user, genshin.Game.GENSHIN)

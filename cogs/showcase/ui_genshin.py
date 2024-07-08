@@ -18,7 +18,7 @@ class ShowcaseCharactersDropdown(discord.ui.Select):
 
     def __init__(self, showcase: Showcase) -> None:
         self.showcase = showcase
-        options = [discord.SelectOption(label="玩家資料一覽", value="-1", emoji="📜")]
+        options = [discord.SelectOption(label="Player Profile", value="-1", emoji="📜")]
         for i, character in enumerate(showcase.data.player.characters_preview):  # type: ignore
             element = {
                 enkanetwork.ElementType.Pyro: "pyro",
@@ -39,8 +39,8 @@ class ShowcaseCharactersDropdown(discord.ui.Select):
                     emoji=emoji.elements.get(element),
                 )
             )
-        options.append(discord.SelectOption(label="刪除角色快取資料", value="-2", emoji="❌"))
-        super().__init__(placeholder="選擇展示櫃角色：", options=options)
+        options.append(discord.SelectOption(label="Delete character cache data", value="-2", emoji="❌"))
+        super().__init__(placeholder="Select Showcase：", options=options)
 
     async def callback(self, interaction: discord.Interaction) -> None:
         index = int(self.values[0])
@@ -57,11 +57,12 @@ class ShowcaseCharactersDropdown(discord.ui.Select):
             user = await Database.select_one(User, User.discord_id.is_(interaction.user.id))
             if user is None or user.uid_genshin != self.showcase.uid:
                 await interaction.response.send_message(
-                    embed=EmbedTemplate.error("非此UID本人，無法刪除資料"), ephemeral=True
+                    embed = EmbedTemplate.error("Not the owner of this UID, cannot delete data"),
+                    ephemeral = True
                 )
             elif user.cookie_genshin is None:
                 await interaction.response.send_message(
-                    embed=EmbedTemplate.error("未設定Cookie，無法驗證此UID本人，無法刪除資料"),
+                    embed = EmbedTemplate.error("Cookie not set, cannot verify owner of this UID, cannot delete data"),
                     ephemeral=True,
                 )
             else:
@@ -91,7 +92,7 @@ class GenerateImageButton(discord.ui.Button):
     """產生圖片按鈕"""
 
     def __init__(self, showcase: Showcase, character_index: int):
-        super().__init__(style=discord.ButtonStyle.primary, label="圖片")
+        super().__init__(style=discord.ButtonStyle.primary, label="Image")
         self.showcase = showcase
         self.character_index = character_index
 
@@ -123,8 +124,8 @@ class ShowcaseView(discord.ui.View):
         super().__init__(timeout=config.discord_view_long_timeout)
         if character_index is not None:
             self.add_item(GenerateImageButton(showcase, character_index))
-            self.add_item(ShowcaseButton("面板", showcase.get_character_stat_embed, character_index))
-            self.add_item(ShowcaseButton("詞條", showcase.get_artifact_stat_embed, character_index))
+            self.add_item(ShowcaseButton("Character", showcase.get_character_stat_embed, character_index))
+            self.add_item(ShowcaseButton("Artifact", showcase.get_artifact_stat_embed, character_index))
 
         if showcase.data.player.characters_preview:  # type: ignore
             self.add_item(ShowcaseCharactersDropdown(showcase))
@@ -141,12 +142,12 @@ async def showcase(
     if uid is None:
         await interaction.edit_original_response(
             embed=EmbedTemplate.error(
-                f"請先使用 {get_app_command_mention('uid設定')}，或是直接在指令uid參數中輸入欲查詢的UID",
-                title="找不到角色UID",
+                f"Please use {get_app_command_mention('uid_settings')} first, or directly input the UID you want to query into the UID parameter of the command.",
+                title = "Character UID not found",
             )
         )
     elif len(str(uid)) < 9 or len(str(uid)) > 10 or str(uid)[0] not in ["1", "2", "5", "6", "7", "8", "9"]:
-        await interaction.edit_original_response(embed=EmbedTemplate.error("輸入的UID格式錯誤"))
+        await interaction.edit_original_response(embed=EmbedTemplate.error("The format of the entered UID is incorrect"))
     else:
         showcase = Showcase(uid)
         try:
@@ -159,6 +160,6 @@ async def showcase(
             sentry_sdk.capture_exception(e)
 
             embed = EmbedTemplate.error(
-                str(e) + f"\n你可以點擊 [連結]({showcase.url}) 查看網站狀態", title=f"UID：{uid}"
+                str(e) + f"\nYou can click [here]({showcase.url}) to check the website status",title = f"UID: {uid}"
             )
             await interaction.edit_original_response(embed=embed)

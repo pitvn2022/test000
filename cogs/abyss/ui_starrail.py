@@ -25,13 +25,13 @@ class ChooseAbyssModeButton(discord.ui.View):
         super().__init__(timeout=config.discord_view_short_timeout)
         self.value = None
 
-    @discord.ui.button(label="忘卻之庭", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Forgotten Hall", style=discord.ButtonStyle.blurple)
     async def forgotten_hall(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.value = AbyssMode.FORGOTTEN_HALL
         self.stop()
 
-    @discord.ui.button(label="虛構敘事", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Pure Fiction", style=discord.ButtonStyle.blurple)
     async def pure_fiction(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.value = AbyssMode.PURE_FICTION
@@ -60,7 +60,7 @@ class HallRecordDropdown(discord.ui.Select):
             )
             for i, hall in enumerate(sorted_hall_data_list)
         ]
-        super().__init__(placeholder="選擇期數：", options=options)
+        super().__init__(placeholder="Select the issue：", options=options)
         self.user = user
         self.nickname = nickname
         self.uid = uid
@@ -92,10 +92,10 @@ class HallFloorDropdown(discord.ui.Select):
         save_or_remove: typing.Literal["SAVE", "REMOVE"],
     ):
         # 第一個選項依據參數顯示為保存或是刪除紀錄
-        _descr = "保存此次紀錄到資料庫，之後可從歷史紀錄查看" if save_or_remove == "SAVE" else "從資料庫中刪除本次忘卻之庭紀錄"
+        _descr = "Save this record to the database for future viewing in the history logs" if save_or_remove == "SAVE" else "Delete this Forgotten Hall record from the database"
         options = [
             discord.SelectOption(
-                label=f"{'📁 儲存本次紀錄' if save_or_remove == 'SAVE' else '❌ 刪除本次紀錄'}",
+                label = f"{'📁 Save this record' if save_or_remove == 'SAVE' else '❌ Delete this record'}",
                 description=_descr,
                 value=save_or_remove,
             )
@@ -109,7 +109,7 @@ class HallFloorDropdown(discord.ui.Select):
         ]
 
         super().__init__(
-            placeholder="選擇樓層（可多選）：",
+            placeholder="Select floor (multiple allowed)：",
             options=options,
             max_values=(min(3, len(hall_data.data.floors))),
         )
@@ -128,16 +128,16 @@ class HallFloorDropdown(discord.ui.Select):
                 if self.save_or_remove == "SAVE":
                     await Database.insert_or_replace(self.hall_data)
                     await interaction.response.send_message(
-                        embed=EmbedTemplate.normal("已儲存本次挑戰紀錄"), ephemeral=True
+                        embed=EmbedTemplate.normal("Challenge record has been saved"), ephemeral=True
                     )
                 else:  # self.save_or_remove == 'REMOVE'
                     await Database.delete_instance(self.hall_data)
                     await interaction.response.send_message(
-                        embed=EmbedTemplate.normal("已刪除本次挑戰紀錄"), ephemeral=True
+                        embed=EmbedTemplate.normal("Challenge record has been deleted"), ephemeral=True
                     )
             else:
                 await interaction.response.send_message(
-                    embed=EmbedTemplate.error("僅限本人才能操作"), ephemeral=True
+                    embed=EmbedTemplate.error("Operation restricted to the user only"), ephemeral=True
                 )
         else:  # 繪製樓層圖片
             await interaction.response.defer()
@@ -165,12 +165,12 @@ class ForgottenHallUI:
         view_item: discord.ui.Item | None = None,
     ):
         if isinstance(hall_data, StarrailForgottenHall):
-            title = "忘卻之庭"
+            title = "Forgotten Hall"
         else:  # isinstance(hall_data, StarrailPureFiction)
-            title = "虛構敘事"
+            title = "Pure Fiction"
         hall = hall_data.data
         embed = genshin_py.parse_starrail_hall_overview(hall)
-        embed.title = f"{user.display_name} 的{title}戰績"
+        embed.title = f"{user.display_name}'s {title} Record"
         embed.set_thumbnail(url=user.display_avatar.url)
         view = None
         if len(hall.floors) > 0:
@@ -214,7 +214,7 @@ class ForgottenHallUI:
                 )
             if len(hall_data_list) == 0:
                 await interaction.edit_original_response(
-                    embed=EmbedTemplate.normal("此使用者沒有保存任何歷史紀錄"),
+                    embed=EmbedTemplate.normal("This user has not saved any historical records"),
                     view=None,
                 )
             else:

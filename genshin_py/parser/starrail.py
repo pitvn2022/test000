@@ -15,20 +15,20 @@ async def parse_starrail_notes(
 ) -> discord.Embed:
     """解析即時便箋的資料，將內容排版成 discord 嵌入格式回傳"""
     # 開拓力
-    stamina_title = f"當前開拓力：{notes.current_stamina}/{notes.max_stamina}"
+    stamina_title = f"Trailblaze Power：{notes.current_stamina}/{notes.max_stamina}"
     if notes.current_reserve_stamina > 0:
         stamina_title += f" + {notes.current_reserve_stamina}"
     if notes.current_stamina >= notes.max_stamina:
-        recovery_time = "已額滿！"
+        recovery_time = "Full！"
     else:
         day_msg = get_day_of_week(notes.stamina_recovery_time)
         recovery_time = f"{day_msg} {notes.stamina_recovery_time.strftime('%H:%M')}"
-    stamina_msg = f"恢復時間：{recovery_time}\n"
+    stamina_msg = f"Trailblaze Power：{recovery_time}\n"
 
     # 每日、模擬宇宙、周本
-    stamina_msg += f"每日實訓：{notes.current_train_score} / {notes.max_train_score}\n"
-    stamina_msg += f"模擬宇宙：{notes.current_rogue_score} / {notes.max_rogue_score}\n"
-    stamina_msg += f"歷戰餘響：剩餘 {notes.remaining_weekly_discounts} 次\n"
+    stamina_msg += f"Train Score：{notes.current_train_score} / {notes.max_train_score}\n"
+    stamina_msg += f"Simulator score：{notes.current_rogue_score} / {notes.max_rogue_score}\n"
+    stamina_msg += f"Weekly bosses：Remaining {notes.remaining_weekly_discounts} /3\n"
 
     # 委託執行
     exped_finished = 0
@@ -37,7 +37,7 @@ async def parse_starrail_notes(
         exped_msg += f"． {expedition.name}："
         if expedition.finished is True:
             exped_finished += 1
-            exped_msg += "已完成\n"
+            exped_msg += "Completed\n"
         else:
             day_msg = get_day_of_week(expedition.completion_time)
             exped_msg += f"{day_msg} {expedition.completion_time.strftime('%H:%M')}\n"
@@ -45,14 +45,14 @@ async def parse_starrail_notes(
     if short_form is True and len(notes.expeditions) > 0:
         longest_expedition = max(notes.expeditions, key=lambda epd: epd.remaining_time)
         if longest_expedition.finished is True:
-            exped_msg = "． 完成時間：已完成\n"
+            exped_msg = "． Finish Time: Finished\n"
         else:
             day_msg = get_day_of_week(longest_expedition.completion_time)
             exped_msg = (
-                f"． 完成時間：{day_msg} {longest_expedition.completion_time.strftime('%H:%M')}\n"
+                f"． Finish time：{day_msg} {longest_expedition.completion_time.strftime('%H:%M')}\n"
             )
 
-    exped_title = f"委託執行：{exped_finished}/{len(notes.expeditions)}"
+    exped_title = f"Expedition：{exped_finished}/{len(notes.expeditions)}"
 
     # 根據開拓力數量，以一半作分界，embed 顏色從綠色 (0x28c828) 漸變到黃色 (0xc8c828)，再漸變到紅色 (0xc82828)
     stamina = notes.current_stamina
@@ -72,7 +72,7 @@ async def parse_starrail_notes(
         _u = await Database.select_one(User, User.discord_id.is_(user.id))
         uid = str(_u.uid_starrail if _u else "")
         embed.set_author(
-            name=f"鐵道 {get_server_name(uid[0])} {uid}",
+            name=f"StarRail UID {get_server_name(uid[0])} {uid}",
             icon_url=user.display_avatar.url,
         )
     return embed
@@ -158,7 +158,7 @@ def parse_starrail_hall_overview(
     desc: str = (
         f"{hall.begin_time.datetime.strftime('%Y.%m.%d')} ~ {hall.end_time.datetime.strftime('%Y.%m.%d')}\n"
     )
-    desc += f"關卡進度：{hall.max_floor}\n"
-    desc += f"戰鬥次數：{battle_nums}　★：{hall.total_stars}\n"
+    desc += f"Progress: {hall.max_floor}\n"
+    desc += f"Battles: {battle_nums} ★: {hall.total_stars}\n"
     embed = discord.Embed(description=desc, color=0x934151)
     return embed

@@ -35,14 +35,14 @@ class DiaryCog(commands.Cog, name="旅行者札記/開拓月曆"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="diary旅行者札記", description="查詢旅行者札記(原石、摩拉收入)")
-    @app_commands.rename(month="月份")
-    @app_commands.describe(month="請選擇要查詢的月份")
+    @app_commands.command(name="zbeta_diary", description="To query Traveler's Notes (Primogems and Mora income)")
+    @app_commands.rename(month="month")
+    @app_commands.describe(month="Please select the month you want to query")
     @app_commands.choices(
         month=[
-            Choice(name="這個月", value=0),
-            Choice(name="上個月", value=-1),
-            Choice(name="上上個月", value=-2),
+            Choice(name="This Month", value=0),
+            Choice(name="Last Month", value=-1),
+            Choice(name="Month Before Last", value=-2),
         ]
     )
     @SlashCommandLogger

@@ -14,27 +14,27 @@ class GameSelectionView(discord.ui.View):
     @discord.ui.select(
         cls=discord.ui.Select,
         options=[
-            discord.SelectOption(label="原神", value="genshin"),
-            discord.SelectOption(label="崩壞3", value="honkai3rd"),
-            discord.SelectOption(label="絕區零", value="nap"),
-            discord.SelectOption(label="星穹鐵道", value="hkrpg"),
-            discord.SelectOption(label="未定事件簿", value="tot"),
+            discord.SelectOption(label="Genshin Impact", value="genshin"),
+            discord.SelectOption(label="Honkai Impact 3", value="honkai3rd"),
+            discord.SelectOption(label="Zenless Zone Zero", value="nap"),
+            discord.SelectOption(label="Honkai: Star Rail", value="hkrpg"),
+            discord.SelectOption(label="Tear of Themis", value="tot"),
         ],
         min_values=1,
         max_values=5,
-        placeholder="請選擇遊戲 (可多選)：",
+        placeholder="Please select a game (multiple choices): ",
     )
     async def select_callback(self, interaction: discord.Interaction, select: discord.ui.Select):
         modal = CookieModal([genshin.Game(v) for v in select.values])
         await interaction.response.send_modal(modal)
 
 
-class CookieModal(discord.ui.Modal, title="提交Cookie"):
+class CookieModal(discord.ui.Modal, title="Submit Cookie"):
     """提交 Cookie 的表單"""
 
     ltuid_v2: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
         label="ltuid_v2",
-        placeholder="請貼上取得的 ltuid_v2",
+        placeholder="Please post the obtained: ltuid_v2.",
         style=discord.TextStyle.short,
         required=False,
         min_length=5,
@@ -43,7 +43,7 @@ class CookieModal(discord.ui.Modal, title="提交Cookie"):
 
     ltoken_v2: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
         label="ltoken_v2",
-        placeholder="請貼上取得的 ltoken_v2",
+        placeholder="Please post the obtained: ltoken_v2.",
         style=discord.TextStyle.short,
         required=False,
         min_length=30,
@@ -52,7 +52,7 @@ class CookieModal(discord.ui.Modal, title="提交Cookie"):
 
     ltmid_v2: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
         label="ltmid_v2",
-        placeholder="請貼上取得的 ltmid_v2",
+        placeholder="Please post the obtained: ltmid_v2",
         style=discord.TextStyle.short,
         required=False,
         min_length=5,
@@ -61,7 +61,7 @@ class CookieModal(discord.ui.Modal, title="提交Cookie"):
 
     cookie: discord.ui.TextInput[discord.ui.Modal] = discord.ui.TextInput(
         label="Cookie",
-        placeholder="非特殊需求本欄請保持空白，此處用來貼完整的 Cookie 字串",
+        placeholder="Leave this field blank if you don't need it, this is where the full cookie string will be posted.",
         style=discord.TextStyle.long,
         required=False,
         min_length=50,
@@ -74,7 +74,7 @@ class CookieModal(discord.ui.Modal, title="提交Cookie"):
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            embed=EmbedTemplate.normal("設定中，請稍後..."), ephemeral=True
+            embed=EmbedTemplate.normal("Setting, please wait..."), ephemeral=True
         )
 
         # 將 ltuid_v2 和 ltoken_v2 附加到 cookie 中
@@ -101,14 +101,14 @@ class CookieModal(discord.ui.Modal, title="提交Cookie"):
             trimmed_cookie = await self._trim_cookies(cookie)
             if trimmed_cookie is None:
                 raise Exception(
-                    f"錯誤或無效的Cookie，請重新輸入(使用 {get_app_command_mention('cookie設定')} 顯示說明)"
+                    f"Invalid or incorrect Cookie, please re-enter (use {get_app_command_mention('cookie_settings')} for instructions)"
                 )
             msg = await genshin_py.set_cookie(interaction.user.id, trimmed_cookie, self.games)
         except Exception as e:
             embed = EmbedTemplate.error(e)
             if embed.description is not None:
                 embed.description += (
-                    "點 [>>教學連結<<](https://hackmd.io/66fq-6NsT1Kqxqbpkj1xTA) 查看解決方法\n"
+                    "Click [>>Tutorial Link<<](https://hackmd.io/66fq-6NsT1Kqxqbpkj1xTA) to see the solution\n"
                 )
             await interaction.edit_original_response(embed=embed)
         else:

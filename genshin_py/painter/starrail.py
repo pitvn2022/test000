@@ -28,7 +28,7 @@ async def draw_character(character: genshin.models.FloorCharacter) -> Image.Imag
     draw_text(
         background,
         (background.width / 2, 193),
-        f"{character.rank}魂 {character.level}級",
+        f"E{character.rank} Level {character.level}",
         "SourceHanSansTC-Regular.otf",
         24,
         (50, 50, 50),
@@ -49,7 +49,7 @@ async def draw_floor(
     draw_text(
         img,
         (img.width, 5),
-        f"使用輪：{floor.round_num}",
+        f"Round Used: {floor.round_num}",
         "SourceHanSansTC-Regular.otf",
         32,
         (200, 200, 200),
@@ -60,7 +60,7 @@ async def draw_floor(
         draw_text(
             img,
             (1000, 5),
-            f"總分：{floor.score} ({floor.node_1.score} + {floor.node_2.score})",
+            f"Total Score: {floor.score} ({floor.node_1.score} + {floor.node_2.score})",
             "SourceHanSansTC-Regular.otf",
             32,
             (200, 200, 200),
@@ -106,10 +106,10 @@ async def draw_starrail_forgottenhall_card(
 
     if isinstance(hall, genshin.models.StarRailChallenge):
         background_img_path = "data/image/forgotten_hall/bg.png"
-        title = "忘卻之庭"
+        title = "Forgotten Hall"
     elif isinstance(hall, genshin.models.StarRailPureFiction):
         background_img_path = "data/image/forgotten_hall/bg_blue.png"
-        title = "虛構敘事"
+        title = "Pure Fiction"
 
     img = Image.open(background_img_path).convert("RGBA")
 
@@ -137,7 +137,7 @@ async def draw_starrail_forgottenhall_card(
     draw_text(
         img,
         (img.width / 2, 190),
-        f"關卡進度：{hall.max_floor}　戰鬥次數：{hall.total_battles}",
+        f"Progress: {hall.max_floor}　Total Battles: {hall.total_battles}",
         "SourceHanSansTC-Regular.otf",
         28,
         (220, 220, 220),

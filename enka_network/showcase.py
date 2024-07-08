@@ -12,7 +12,7 @@ from .api import EnkaAPI
 from .enka_card import generate_image
 from .request import fetch_enka_data
 
-enka_assets = enkanetwork.Assets(lang=enkanetwork.Language.CHT)
+enka_assets = enkanetwork.Assets(lang=enkanetwork.Language.EN)
 
 
 class Showcase:
@@ -80,12 +80,12 @@ class Showcase:
         embed = discord.Embed(
             title=player.nickname,
             description=f"「{player.signature}」\n"
-            f"冒險等階：{player.level}\n"
-            f"世界等級：{player.world_level}\n"
-            f"成就總數：{player.achievement}\n"
-            f"深境螺旋：{player.abyss_floor}-{player.abyss_room}\n"
-            f"下次可刷新時間：<t:{self.raw_data.get('timestamp', 0) + self.raw_data.get('ttl', 0)}:R>\n"
-            + (f"({self.api_error_msg}，顯示的為快取資料)" if self.is_cached_data is True else ""),
+            f"Player Level：{player.level}\n"
+            f"Player World Level：{player.world_level}\n"
+            f"Player Achievement：{player.achievement}\n"
+            f"Player Spiral Abyss：{player.abyss_floor}-{player.abyss_room}\n"
+            f"Next refresh time: <t:{self.raw_data.get('timestamp', 0) + self.raw_data.get('ttl', 0)}:R>"
+            + (f"({self.api_error_msg}, displayed from cache)" if self.is_cached_data else ""),
         )
         if player.avatar and player.avatar.icon:
             embed.set_thumbnail(url=player.avatar.icon.url)
@@ -99,7 +99,7 @@ class Showcase:
     def get_character_stat_embed(self, index: int) -> discord.Embed:
         """取得角色面板的嵌入訊息"""
         embed = self.get_default_embed(index)
-        embed.title = (embed.title + " 角色面板") if embed.title is not None else "角色面板"
+        embed.title = (embed.title + " Character") if embed.title is not None else "Character"
         if self.data.characters is None:
             return embed
 
@@ -112,11 +112,11 @@ class Showcase:
             else "?/?/?"
         )
         embed.add_field(
-            name="角色資料",
-            value=f"命座：{character.constellations_unlocked}\n"
-            f"等級：Lv. {character.level}\n"
-            f"天賦：{skill_string}\n"
-            f"好感：Lv. {character.friendship_level}",
+            name="Character Info",
+            value=f"Constellations Unlocked: {character.constellations_unlocked}\n"
+            f"Level: Lv. {character.level}\n"
+            f"Talents: {skill_string}\n"
+            f"Affection Level: Lv. {character.friendship_level}",
         )
         # 武器
         weapon_list = [
@@ -126,8 +126,8 @@ class Showcase:
             weapon = weapon_list[0]
             embed.add_field(
                 name=f"★{weapon.detail.rarity} {weapon.detail.name}",
-                value=f"精煉：{weapon.refinement} 階\n"
-                f"等級：Lv. {weapon.level}\n"
+                value=f"Refinement: {weapon.refinement} level\n"
+                f"Level: Lv. {weapon.level}\n"
                 f"{self._get_statprop_sentence(weapon.detail.mainstats) if weapon.detail.mainstats else ''}\n"
                 f"{self._get_statprop_sentence(weapon.detail.substats[0]) if len(weapon.detail.substats) > 0 else ''}",
             )
@@ -175,11 +175,11 @@ class Showcase:
             "DEF": emoji.fightprop.get("FIGHT_PROP_DEFENSE", ""),
         }
         embed.add_field(
-            name="屬性面板",
+            name="Attribute Panel",
             value=(
-                f"{_emoji['HP']}生命值：{_hp[0]} ({_hp[1]} +{_hp[2]})\n"
-                f"{_emoji['ATK']}攻擊力：{_atk[0]} ({_atk[1]} +{_atk[2]})\n"
-                f"{_emoji['DEF']}防禦力：{_def[0]} ({_def[1]} +{_def[2]})\n"
+                f"{_emoji['HP']}HP: {_hp[0]} ({_hp[1]} +{_hp[2]})\n"
+                f"{_emoji['ATK']}Attack: {_atk[0]} ({_atk[1]} +{_atk[2]})\n"
+                f"{_emoji['DEF']}Defense: {_def[0]} ({_def[1]} +{_def[2]})\n"
                 f"{substat}"
             ),
             inline=False,
@@ -189,17 +189,17 @@ class Showcase:
     def get_artifact_stat_embed(self, index: int) -> discord.Embed:
         """取得角色聖遺物詞條數的嵌入訊息"""
         embed = self.get_default_embed(index)
-        embed.title = (embed.title + " 聖遺物") if embed.title is not None else "聖遺物"
+        embed.title = (embed.title + "Artifact") if embed.title is not None else "Artifact"
 
         if self.data.characters is None:
             return embed
 
         pos_name_map = {
-            "EQUIP_BRACER": "花",
-            "EQUIP_NECKLACE": "羽",
-            "EQUIP_SHOES": "沙",
-            "EQUIP_RING": "杯",
-            "EQUIP_DRESS": "冠",
+            "EQUIP_BRACER": "Flower",
+            "EQUIP_NECKLACE": "Feather",
+            "EQUIP_SHOES": "Sands",
+            "EQUIP_RING": "Goblet",
+            "EQUIP_DRESS": "Circlet",
         }
         substat_sum: dict[str, float] = dict()  # 副詞條數量統計
         crit_value: float = 0.0  # 雙爆分
@@ -228,13 +228,13 @@ class Showcase:
                 substat_sum[substat.prop_id] = substat_sum.get(substat.prop_id, 0) + substat.value
 
             # 聖遺物部位
-            pos_name = pos_name_map.get(equip.detail.artifact_type.value, "未知")
+            pos_name = pos_name_map.get(equip.detail.artifact_type.value, "unknown")
 
             _artifact_emoji = emoji.artifact_type.get(pos_name, pos_name + "：")
             _artifact_set_name = equip.detail.artifact_name_set
 
             # 只將沙、杯、冠的聖遺物顯示在嵌入訊息中
-            if pos_name not in ["花", "羽"]:
+            if pos_name not in ["flower", "feather"]:
                 embed.add_field(
                     name=f"{_artifact_emoji}{_artifact_set_name}",
                     value=embed_value,
@@ -272,19 +272,19 @@ class Showcase:
             )
 
         embed_value = ""
-        embed_value += substatSummary("FIGHT_PROP_ATTACK_PERCENT", "攻擊力％", 5.0)
-        embed_value += substatSummary("FIGHT_PROP_HP_PERCENT", "生命值％", 5.0)
-        embed_value += substatSummary("FIGHT_PROP_DEFENSE_PERCENT", "防禦力％", 6.2)
-        embed_value += substatSummary("FIGHT_PROP_CHARGE_EFFICIENCY", "元素充能", 5.5)
-        embed_value += substatSummary("FIGHT_PROP_ELEMENT_MASTERY", "元素精通", 20)
-        embed_value += substatSummary("FIGHT_PROP_CRITICAL", "暴擊率　", 3.3)
-        embed_value += substatSummary("FIGHT_PROP_CRITICAL_HURT", "暴擊傷害", 6.6)
+        embed_value += substatSummary("FIGHT_PROP_ATTACK_PERCENT", "Flat ATK％", 5.0)
+        embed_value += substatSummary("FIGHT_PROP_HP_PERCENT", "Flat HP％", 5.0)
+        embed_value += substatSummary("FIGHT_PROP_DEFENSE_PERCENT", "Flat DEF％", 6.2)
+        embed_value += substatSummary("FIGHT_PROP_CHARGE_EFFICIENCY", "Energy Recharge", 5.5)
+        embed_value += substatSummary("FIGHT_PROP_ELEMENT_MASTERY", "Elemental Mastery", 20)
+        embed_value += substatSummary("FIGHT_PROP_CRITICAL", "Crit RATE　", 3.3)
+        embed_value += substatSummary("FIGHT_PROP_CRITICAL_HURT", "Crit DMG", 6.6)
         if embed_value != "":
             crit_value += substat_sum.get("FIGHT_PROP_CRITICAL", 0) * 2 + substat_sum.get(
                 "FIGHT_PROP_CRITICAL_HURT", 0
             )
             embed.add_field(
-                name="詞條數" + (f" (雙爆{round(crit_value)})" if crit_value > 100 else ""),
+                name="Stats" + (f" (Crit{round(crit_value)})" if crit_value > 100 else ""),
                 value=embed_value,
             )
 
@@ -302,7 +302,7 @@ class Showcase:
             image = await generate_image(
                 self.data,
                 self.data.characters[index],
-                enkanetwork.Language.CHT,
+                enkanetwork.Language.EN,
                 save_locally=False,
             )
             self.image_buffers[index] = image
@@ -329,14 +329,14 @@ class Showcase:
 
         if (player := self.data.player) is not None:
             embed.set_author(
-                name=f"{player.nickname} 的角色展示櫃",
+                name=f"{player.nickname} Character Showcase",
                 url=self.url,
                 icon_url=player.avatar.icon.url if player.avatar and player.avatar.icon else None,
             )
             embed.set_footer(text=f"{player.nickname}．Lv. {player.level}．UID: {self.uid}")
 
         if self.data.characters is None:
-            embed.description = "請在您遊戲中的角色展示櫃中打開「顯示角色詳情」來查看更詳細的角色資料"
+            embed.description = "Please open [Show Character Details] in your in-game character showcase to view more detailed character information."
 
         return embed
 

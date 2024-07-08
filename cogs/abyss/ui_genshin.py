@@ -34,7 +34,7 @@ class AbyssRecordDropdown(discord.ui.Select):
 
         options = [
             discord.SelectOption(
-                label=f"[第 {abyss.season} 期] ★ {abyss.abyss.total_stars} {honor(abyss.abyss)}",
+                label=f"Spiral Abyss Season {abyss.season} ★ {abyss.abyss.total_stars} {honor(abyss.abyss)}",
                 description=(
                     f"{abyss.abyss.start_time.astimezone().strftime('%Y.%m.%d')} ~ "
                     f"{abyss.abyss.end_time.astimezone().strftime('%Y.%m.%d')}"
@@ -43,7 +43,7 @@ class AbyssRecordDropdown(discord.ui.Select):
             )
             for i, abyss in enumerate(abyss_data_list)
         ]
-        super().__init__(placeholder="選擇期數：", options=options)
+        super().__init__(placeholder="Select the period：", options=options)
         self.user = user
         self.abyss_data_list = abyss_data_list
 
@@ -65,23 +65,23 @@ class AbyssFloorDropdown(discord.ui.Select):
         save_or_remove: Literal["SAVE", "REMOVE"],
     ):
         # 第一個選項依據參數顯示為保存或是刪除紀錄
-        _description = "保存此次紀錄到資料庫，之後可從歷史紀錄查看" if save_or_remove == "SAVE" else "從資料庫中刪除本次深淵紀錄"
+        _description = "Save this record to the database for future viewing in the history logs" if save_or_remove == "SAVE" else "Delete this Spiral Abyss record from the database"
         option = [
             discord.SelectOption(
-                label=f"{'📁 儲存本次紀錄' if save_or_remove == 'SAVE' else '❌ 刪除本次紀錄'}",
+                label=f"{'📁 Save this record' if save_or_remove == 'SAVE' else '❌ Delete this record'}",
                 description=_description,
                 value=save_or_remove,
             )
         ]
         options = option + [
             discord.SelectOption(
-                label=f"[★{floor.stars}] 第 {floor.floor} 層",
+                label=f"[★{floor.stars}] Floor {floor.floor} ",
                 description=genshin_py.parse_genshin_abyss_chamber(floor.chambers[-1]),
                 value=str(i),
             )
             for i, floor in enumerate(abyss_data.abyss.floors)
         ]
-        super().__init__(placeholder="選擇樓層：", options=options)
+        super().__init__(placeholder="Select the floor：", options=options)
         self.embed = overview
         self.abyss_data = abyss_data
         self.save_or_remove = save_or_remove
@@ -94,16 +94,16 @@ class AbyssFloorDropdown(discord.ui.Select):
                 if self.save_or_remove == "SAVE":
                     await Database.insert_or_replace(self.abyss_data)
                     await interaction.response.send_message(
-                        embed=EmbedTemplate.normal("已儲存本次深淵紀錄"), ephemeral=True
+                        embed=EmbedTemplate.normal("Spiral Abyss record has been saved"), ephemeral=True
                     )
                 else:  # self.save_or_remove == 'REMOVE'
                     await Database.delete_instance(self.abyss_data)
                     await interaction.response.send_message(
-                        embed=EmbedTemplate.normal("已刪除本次深淵紀錄"), ephemeral=True
+                        embed=EmbedTemplate.normal("Spiral Abyss record has been deleted"), ephemeral=True
                     )
             else:
                 await interaction.response.send_message(
-                    embed=EmbedTemplate.error("僅限本人才能操作"), ephemeral=True
+                    embed=EmbedTemplate.error("Operation restricted to the user only"), ephemeral=True
                 )
         else:  # 繪製樓層圖片
             await interaction.response.defer()
@@ -130,7 +130,7 @@ class SpiralAbyssUI:
         view_item: Optional[discord.ui.Item] = None,
     ):
         embed = genshin_py.parse_genshin_abyss_overview(abyss_data.abyss)
-        embed.title = f"{user.display_name} 的深境螺旋戰績"
+        embed.title = f"{user.display_name} Spiral Abyss battle record"
         embed.set_thumbnail(url=user.display_avatar.url)
         view = None
         if len(abyss_data.abyss.floors) > 0:
@@ -155,7 +155,7 @@ class SpiralAbyssUI:
             )
             if len(abyss_data_list) == 0:
                 await interaction.response.send_message(
-                    embed=EmbedTemplate.normal("此使用者沒有保存任何歷史紀錄")
+                    embed=EmbedTemplate.normal("This user has not saved any historical records")
                 )
             else:
                 abyss_data_list = sorted(abyss_data_list, key=lambda x: x.season, reverse=True)
