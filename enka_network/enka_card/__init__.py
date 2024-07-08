@@ -1,0 +1,1 @@
+from .enka_card.generator import generate_image
